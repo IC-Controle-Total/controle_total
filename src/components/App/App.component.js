@@ -13,10 +13,11 @@ import PremiumRequiredModal from '../PremiumFeature/PremiumRequiredModal';
 import Notifications from '../Notifications';
 import NotFound from '../NotFound';
 import Settings from '../Settings';
-import WelcomeScreen from '../WelcomeScreen';
+// import WelcomeScreen from '../WelcomeScreen'; // <-- Comentei aqui, pois não vamos usar na raiz agora
 import Analytics from '../Analytics';
 import './App.css';
 import LoginRequiredModal from '../LoggedInFeature/LoginRequiredModal';
+import Home from '../Home/Home.component';
 
 export class App extends Component {
   static propTypes = {
@@ -50,7 +51,7 @@ export class App extends Component {
     const {
       lang,
       dir,
-      isFirstVisit,
+      // isFirstVisit, // <-- Não precisamos mais testar isso para a raiz
       isLogged,
       dark,
       isDownloadingLang
@@ -76,18 +77,15 @@ export class App extends Component {
           <Route path="/reset/:userid/:url" component={ChangePassword} />
           <Route path="/login/:type/callback" component={OAuthLogin} />
           <Route path="/board/:id" component={BoardContainer} />
+
           {isDownloadingLang && (
             <Route exact path={'/'}>
               <Redirect to={'/settings/language'} />
             </Route>
           )}
-          <Route
-            exact
-            path="/"
-            component={
-              isFirstVisit && !isLogged ? WelcomeScreen : BoardContainer
-            }
-          />
+
+          <Route exact path="/" component={Home} />
+
           <Route component={NotFound} />
         </Switch>
         <PremiumRequiredModal />
