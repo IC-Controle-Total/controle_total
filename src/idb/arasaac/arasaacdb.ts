@@ -172,7 +172,7 @@ async function initTextStore(lang: string): Promise<void> {
       textStore.put({ ...data, keywords: keywords });
     });
   } else {
-    const defaultLang = 'en';
+    const defaultLang = 'pt-BR';
     const defaultText = await keywordsStore.get(defaultLang);
 
     if (defaultText) {

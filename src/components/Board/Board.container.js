@@ -871,7 +871,7 @@ export class BoardContainer extends Component {
     } else {
       clickSymbol(tile.label);
       if (!navigationSettings.quietBuilderMode) {
-        say();
+        /* say(); */
       }
       if (isLiveMode) {
         const liveTile = {

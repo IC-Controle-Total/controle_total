@@ -1,20 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import classNames from 'classnames';
 import { Scannable } from 'react-scannable';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Button } from '@material-ui/core';
 import ScannerDeactivateIcon from '@material-ui/icons/ExploreOff';
-import BoardShare from '../BoardShare';
+import HomeIcon from '@material-ui/icons/Home';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import FullScreenButton from '../../UI/FullScreenButton';
-import PrintBoardButton from '../../UI/PrintBoardButton';
-import UserIcon from '../../UI/UserIcon';
-import LockToggle from '../../UI/LockToggle';
-import BackButton from '../../UI/BackButton';
-import HelpButton from '../../UI/HelpButton';
-import SettingsButton from '../../UI/SettingsButton';
-import messages from '../Board.messages';
-import { isCordova, isAndroid } from '../../../cordova-util';
+import { isCordova } from '../../../cordova-util';
 import './Navbar.css';
 import { injectIntl } from 'react-intl';
 
@@ -24,37 +18,9 @@ export class Navbar extends React.Component {
 
     this.state = {
       backButton: false,
-      openShareDialog: false,
       deactivateScannerButton: false
     };
   }
-
-  onShareClick = () => {
-    this.setState({ openShareDialog: true });
-  };
-
-  onShareClose = () => {
-    this.setState({ openShareDialog: false });
-  };
-
-  publishBoard = () => {
-    this.props.publishBoard();
-  };
-
-  handleCopyLink = async () => {
-    const { intl, showNotification } = this.props;
-    try {
-      if (isAndroid()) {
-        await window.cordova.plugins.clipboard.copy(this.getBoardToShare());
-      } else {
-        await navigator.clipboard.writeText(this.getBoardToShare());
-      }
-      showNotification(intl.formatMessage(messages.copyMessage));
-    } catch (err) {
-      showNotification(intl.formatMessage(messages.failedToCopy));
-      console.log(err.message);
-    }
-  };
 
   onScannableFocus = property => () => {
     if (!this.state[property]) {
@@ -68,60 +34,42 @@ export class Navbar extends React.Component {
     }
   };
 
-  onUserIconClick = () => {
-    const { userData, isLocked, intl, history } = this.props;
-    if (isLocked) {
-      const userLock = intl.formatMessage(messages.userProfileLocked);
-      this.props.showNotification(userLock);
-    } else {
-      if (userData.name && userData.email) {
-        history.push('/settings/people');
-      } else {
-        history.push('/login-signup');
-      }
-    }
-  };
+  handleHomeOrBackClick = () => {
+    const { disabled, onBackClick, history } = this.props;
 
-  getBoardToShare = () => {
-    const { board } = this.props;
-    if (isCordova()) {
-      return 'https://app.cboard.io/board/' + board.id;
+    // O Cboard passa "disabled=true" pro BackButton quando já está na raiz do board.
+    // Então, se estiver "disabled" no contexto do board, nós mandamos o usuário pra Home da sua IC.
+    if (disabled) {
+      history.push('/');
     } else {
-      return window.location.href;
+      // Se não, executa a ação normal de voltar um nível de pasta.
+      if (onBackClick) onBackClick();
     }
   };
 
   render() {
     const {
       className,
-      intl,
-      board,
-      userData,
-      title,
-      disabled,
-      isLocked,
+      disabled, // Usaremos essa prop para saber se estamos na raiz
       isScannerActive,
-      onBackClick,
-      onDeactivateScannerClick,
-      onLockClick,
-      onLockNotify
+      onDeactivateScannerClick
     } = this.props;
-
-    const isPublic = board && board.isPublic;
-    const isOwnBoard = board && board.email === userData.email;
-    const isLogged = userData && userData.name && userData.email;
 
     return (
       <div className={classNames('Navbar', className)}>
-        {isLocked && <h2 className="Navbar__title">{title}</h2>}
         <div className="Navbar__group Navbar__group--start">
           <div className={this.state.backButton ? 'scanner__focused' : ''}>
             <Scannable
-              disabled={disabled}
               onFocus={this.onScannableFocus('backButton')}
               onBlur={this.onScannableBlur('backButton')}
             >
-              <BackButton disabled={disabled} onClick={onBackClick} />
+              {/* Nosso Botão Customizado de Voltar / Home */}
+              <Button
+                color="inherit"
+                onClick={this.handleHomeOrBackClick}
+                startIcon={disabled ? <HomeIcon /> : <ArrowBackIcon />}
+                style={{ textTransform: 'none', marginLeft: '8px' }}
+              />
             </Scannable>
           </div>
           {isScannerActive && (
@@ -138,40 +86,12 @@ export class Navbar extends React.Component {
               </IconButton>
             </div>
           )}
-          {!isLocked && <HelpButton component={Link} to="/settings/help" />}
         </div>
+
         <div className="Navbar__group Navbar__group--end">
-          {!isLocked && (
-            <React.Fragment>
-              <PrintBoardButton />
-              {!isCordova() && <FullScreenButton />}
-              <SettingsButton component={Link} to="/settings" />
-              <BoardShare
-                label={intl.formatMessage(messages.share)}
-                intl={this.props.intl}
-                isPublic={isPublic}
-                isOwnBoard={isOwnBoard}
-                isLogged={isLogged}
-                onShareClick={this.onShareClick}
-                onShareClose={this.onShareClose}
-                publishBoard={this.publishBoard}
-                onCopyLink={this.handleCopyLink}
-                open={this.state.openShareDialog}
-                url={this.getBoardToShare()}
-                fullScreen={false}
-              />
-            </React.Fragment>
-          )}
-          <div className={'personal__account'}>
-            <UserIcon onClick={this.onUserIconClick} />
-          </div>
-          <div className={'open__lock'}>
-            <LockToggle
-              locked={isLocked}
-              onLockTick={onLockNotify}
-              onClick={onLockClick}
-            />
-          </div>
+          <React.Fragment>
+            {!isCordova() && <FullScreenButton />}
+          </React.Fragment>
         </div>
       </div>
     );
@@ -179,30 +99,9 @@ export class Navbar extends React.Component {
 }
 
 Navbar.propTypes = {
-  /**
-   * @ignore
-   */
   className: PropTypes.string,
-  /**
-   * Bar title
-   */
-  title: PropTypes.string,
-  /**
-   * If disabled, navigation is disabled
-   */
   disabled: PropTypes.bool,
-  /**
-   * If enabled, navigation bar is locked Todo: shouldn't be here - mixing concerns
-   */
-  isLocked: PropTypes.bool,
-  /**
-   * Callback fired when clicking on back button
-   */
   onBackClick: PropTypes.func,
-  /**
-   * Callback fired when clicking on lock button
-   */
-  onLockClick: PropTypes.func,
   isScannerActive: PropTypes.bool,
   onDeactivateScannerClick: PropTypes.func,
   history: PropTypes.object.isRequired

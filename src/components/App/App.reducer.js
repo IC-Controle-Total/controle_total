@@ -89,7 +89,8 @@ function appReducer(state = initialState, action) {
     case UPDATE_NAVIGATION_SETTINGS:
       navigationSettings = {
         ...state.navigationSettings,
-        ...action.payload
+        ...action.payload,
+        liveMode: false
       };
       return {
         ...state,
@@ -151,7 +152,12 @@ function appReducer(state = initialState, action) {
       }
 
       if (navigation) {
-        navigationSettings = { ...navigationSettings, ...navigation };
+        // TRAVA AQUI: Nós forçamos o liveMode a ser false, ignorando o que vem do banco de dados!
+        navigationSettings = {
+          ...navigationSettings,
+          ...navigation,
+          liveMode: false
+        };
       }
 
       return {

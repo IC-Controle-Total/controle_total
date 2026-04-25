@@ -1,9 +1,17 @@
+/* 1. A Barra Branca (Forçando ela a crescer) */
 .SymbolOutput {
-  height: 100%;
+  min-height: 110px;
+  height: max-content !important; /* Força a barra a crescer conforme as linhas quebram */
+  max-height: 230px !important; /* Trava o limite em ~2 linhas */
   width: 100%;
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch; /* Garante que a área dos botões estique até o fim da barra */
   background: #fff;
   color: rgba(0, 0, 0, 0.54);
+  flex-shrink: 0; /* Impede que o painel principal amasse a nossa barra */
+  z-index: 10; /* Garante que a barra passe por cima dos outros elementos se crescer */
 }
 
 .is-dark .SymbolOutput {
@@ -11,11 +19,34 @@
   color: #000;
 }
 
+/* 3. O Card Individual */
 .SymbolOutput__value {
-  height: calc(100% - 10px);
+  height: 90px !important; /* Crava a altura do card para ele não esticar */
   min-width: 100px;
   padding: 0 5px;
+  margin-bottom: 5px; /* Dá aquele respiro entre a fileira 1 e a fileira 2 */
   position: relative;
+}
+
+/* 2. O Container dos Cards */
+.SymbolOutput__cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 auto; /* Puxa todo o espaço esquerdo disponível */
+  max-height: 230px;
+  overflow-y: auto; /* O famoso scroll vertical */
+  overflow-x: hidden;
+  align-content: flex-start; /* Gruda os cards no topo */
+  padding: 5px;
+}
+
+/* Opcional: Barra de rolagem elegante */
+.SymbolOutput__cards-container::-webkit-scrollbar {
+  width: 8px;
+}
+.SymbolOutput__cards-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
 }
 
 .LiveSymbolOutput__value {
