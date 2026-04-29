@@ -144,6 +144,7 @@ class SymbolOutput extends PureComponent {
           style={{ display: 'flex', alignItems: 'center', padding: '0 10px' }}
         >
           <ClearButton
+            id="btn-limpar"
             color="inherit"
             onClick={onClearClick}
             style={clearButtonStyle}
@@ -210,6 +211,7 @@ class SymbolOutput extends PureComponent {
           {/* NOSSO NOVO BOTÃO DE FALAR */}
           {symbols.length > 0 && (
             <Button
+              id="btn-falar"
               variant="contained"
               onClick={this.handleSpeakPhrase}
               startIcon={<VolumeUpIcon />}
@@ -229,6 +231,7 @@ class SymbolOutput extends PureComponent {
 
           {!navigationSettings.removeOutputActive && (
             <BackspaceButton
+              id="btn-apagar-um"
               color="inherit"
               onClick={onBackspaceClick}
               style={backspaceButtonStyle}

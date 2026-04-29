@@ -44,44 +44,17 @@ export class Board extends Component {
       name: PropTypes.string,
       tiles: PropTypes.arrayOf(PropTypes.object)
     }),
-    /**
-     * @ignore
-     */
     className: PropTypes.string,
-    /**
-     *
-     */
     disableBackButton: PropTypes.bool,
-    /**
-     * Callback fired when board tiles are deleted
-     */
     onDeleteClick: PropTypes.func,
-    /**
-     * Callback fired when a board tile is focused
-     */
     onFocusTile: PropTypes.func,
-    /**
-     * Callback fired when a board tile is clicked
-     */
     onTileClick: PropTypes.func,
     onSaveBoardClick: PropTypes.func,
     editBoardTitle: PropTypes.func,
-    /**
-     *
-     */
     onLockNotify: PropTypes.func,
     onScannerActive: PropTypes.func,
-    /**
-     * Callback fired when requesting to load previous board
-     */
     onRequestPreviousBoard: PropTypes.func,
-    /**
-     * Callback fired when requesting to travel and load root board
-     */
     onRequestToRootBoard: PropTypes.func,
-    /**
-     *
-     */
     selectedTileIds: PropTypes.arrayOf(PropTypes.string),
     displaySettings: PropTypes.object,
     navigationSettings: PropTypes.object,
@@ -124,7 +97,10 @@ export class Board extends Component {
 
     this.state = {
       openTitleDialog: false,
-      titleDialogValue: props.board && props.board.name ? props.board.name : ''
+      titleDialogValue: props.board && props.board.name ? props.board.name : '',
+      arduinoZone: 2, // 0 = Branca, 1 = Preta, 2 = Grade
+      arduinoTopIndex: 0, // Qual botão das barras está focado
+      arduinoFocusedIndex: 0 // Estado para o Teclado/Arduino saber qual card está selecionado
     };
 
     this.boardContainerRef = React.createRef();
@@ -135,7 +111,155 @@ export class Board extends Component {
     if (this.props.scannerSettings.active) {
       this.props.onScannerActive();
     }
+    // Liga a audição do teclado (Arduino) quando a tela carrega
+    window.addEventListener('keydown', this.handleArduinoKeys);
   }
+
+  componentWillUnmount() {
+    // Desliga a audição do teclado se o usuário sair da prancha
+    window.removeEventListener('keydown', this.handleArduinoKeys);
+  }
+
+  // ==== MÁGICA DA NAVEGAÇÃO MULTI-ZONAS DO ARDUINO ====
+  handleArduinoKeys = event => {
+    if (this.props.isSelecting || this.state.openTitleDialog) return;
+
+    // Bloqueia a barra de rolagem nativa para TODAS as setas
+    if (
+      ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(event.key)
+    ) {
+      event.preventDefault();
+    }
+
+    let { arduinoZone, arduinoTopIndex, arduinoFocusedIndex } = this.state;
+    const { board } = this.props;
+
+    // Placas de identificação (IDs)
+    const zone0Buttons = ['btn-limpar', 'btn-falar', 'btn-apagar-um']; // Zona 0: Barra Branca
+    const zone1Buttons = ['btn-home', 'btn-tela-cheia']; // Zona 1: Barra Preta
+
+    // Injeta visual azul nos botões do topo
+    const updateTopVisuals = (zone, index) => {
+      [...zone0Buttons, ...zone1Buttons].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.outline = 'none';
+          el.style.transform = 'none';
+        }
+      });
+
+      let activeId = null;
+      if (zone === 0) activeId = zone0Buttons[index];
+      if (zone === 1) activeId = zone1Buttons[index];
+
+      if (activeId) {
+        const activeEl = document.getElementById(activeId);
+        if (activeEl) {
+          // === NOSSA NOVA REGRA EXCLUSIVA PARA A TELA CHEIA ===
+          if (activeId === 'btn-tela-cheia') {
+            activeEl.style.outline = '4px solid #0055ff'; // Borda um pouco mais fina
+            activeEl.style.outlineOffset = '-4px'; // O SEGREDO: Joga a borda pra DENTRO do botão!
+            activeEl.style.borderRadius = '5px';
+            activeEl.style.transform = 'none'; // Não deixa o botão crescer pra não vazar da tela
+          } else {
+            // Regra padrão para os outros botões da barra branca e preta
+            activeEl.style.outline = '6px solid #0055ff';
+            activeEl.style.outlineOffset = '2px';
+            activeEl.style.borderRadius = '5px';
+            activeEl.style.transform = 'scale(1.05)';
+          }
+
+          activeEl.style.transition = '0.2s';
+        }
+      }
+    };
+
+    // --- ZONA 2: A GRADE DE CARDS ---
+    if (arduinoZone === 2) {
+      updateTopVisuals(2, 0); // Limpa as barras de cima
+      const tiles = board ? board.tiles : [];
+      if (!tiles || tiles.length === 0) return;
+
+      let colsCount = 6;
+      if (board.isFixed && board.grid)
+        colsCount = parseInt(board.grid.columns, 10);
+      const maxIndex = tiles.length - 1;
+
+      if (event.key === 'ArrowRight') {
+        arduinoFocusedIndex =
+          arduinoFocusedIndex + 1 > maxIndex ? 0 : arduinoFocusedIndex + 1;
+      } else if (event.key === 'ArrowLeft') {
+        arduinoFocusedIndex =
+          arduinoFocusedIndex - 1 < 0 ? maxIndex : arduinoFocusedIndex - 1;
+      } else if (event.key === 'ArrowDown') {
+        let nextIndex = arduinoFocusedIndex + colsCount;
+        arduinoFocusedIndex = nextIndex > maxIndex ? maxIndex : nextIndex;
+      } else if (event.key === 'ArrowUp') {
+        let prevIndex = arduinoFocusedIndex - colsCount;
+        if (prevIndex < 0) {
+          // Passou do teto? Sobe pra Barra Preta!
+          this.setState({ arduinoZone: 1, arduinoTopIndex: 0 });
+          updateTopVisuals(1, 0);
+          return;
+        } else {
+          arduinoFocusedIndex = prevIndex;
+        }
+      } else if (event.key === 'Enter') {
+        const tileToClick = tiles[arduinoFocusedIndex];
+        if (tileToClick) {
+          this.handleTileClick(tileToClick);
+          if (tileToClick.loadBoard)
+            this.setState({ arduinoFocusedIndex: 0, arduinoZone: 2 });
+        }
+      }
+      this.setState({ arduinoFocusedIndex });
+    }
+    // --- ZONA 1: BARRA PRETA ---
+    else if (arduinoZone === 1) {
+      if (event.key === 'ArrowDown') {
+        this.setState({ arduinoZone: 2 }); // Desce pra Grade
+        updateTopVisuals(2, 0);
+      } else if (event.key === 'ArrowUp') {
+        this.setState({ arduinoZone: 0, arduinoTopIndex: 0 }); // Sobe pra Barra Branca
+        updateTopVisuals(0, 0);
+      } else if (event.key === 'ArrowRight') {
+        arduinoTopIndex = (arduinoTopIndex + 1) % zone1Buttons.length;
+        this.setState({ arduinoTopIndex });
+        updateTopVisuals(1, arduinoTopIndex);
+      } else if (event.key === 'ArrowLeft') {
+        arduinoTopIndex =
+          arduinoTopIndex - 1 < 0
+            ? zone1Buttons.length - 1
+            : arduinoTopIndex - 1;
+        this.setState({ arduinoTopIndex });
+        updateTopVisuals(1, arduinoTopIndex);
+      } else if (event.key === 'Enter') {
+        const btn = document.getElementById(zone1Buttons[arduinoTopIndex]);
+        if (btn) btn.click();
+      }
+    }
+    // --- ZONA 0: BARRA BRANCA ---
+    else if (arduinoZone === 0) {
+      if (event.key === 'ArrowDown') {
+        this.setState({ arduinoZone: 1, arduinoTopIndex: 0 }); // Desce pra Barra Preta
+        updateTopVisuals(1, 0);
+      } else if (event.key === 'ArrowRight') {
+        arduinoTopIndex = (arduinoTopIndex + 1) % zone0Buttons.length;
+        this.setState({ arduinoTopIndex });
+        updateTopVisuals(0, arduinoTopIndex);
+      } else if (event.key === 'ArrowLeft') {
+        arduinoTopIndex =
+          arduinoTopIndex - 1 < 0
+            ? zone0Buttons.length - 1
+            : arduinoTopIndex - 1;
+        this.setState({ arduinoTopIndex });
+        updateTopVisuals(0, arduinoTopIndex);
+      } else if (event.key === 'Enter') {
+        const btn = document.getElementById(zone0Buttons[arduinoTopIndex]);
+        if (btn) btn.click();
+      }
+    }
+  };
 
   handleTileClick = tile => {
     const { onTileClick, isSelecting } = this.props;
@@ -201,7 +325,9 @@ export class Board extends Component {
       displaySettings
     } = this.props;
 
-    return tiles.map(tileToRender => {
+    const focusedIndex = this.state.arduinoFocusedIndex || 0;
+
+    return tiles.map((tileToRender, index) => {
       const tile = {
         ...tileToRender,
         label: resolveTileLabel(tileToRender, this.props.intl)
@@ -209,11 +335,30 @@ export class Board extends Component {
       const isSelected = selectedTileIds.includes(tile.id);
       const variant = Boolean(tile.loadBoard) ? 'folder' : 'button';
 
+      // Checa se este card é o que está sendo mirado pelo Arduino
+      const isArduinoFocused =
+        focusedIndex === index && !isSelecting && this.state.arduinoZone === 2;
+
+      // Visual agressivo para o Cboard não conseguir esconder:
+      const tileStyle = isArduinoFocused
+        ? {
+            transform: 'scale(1.05)',
+            transition: '0.2s',
+            zIndex: 999,
+            position: 'relative',
+            outline: '6px solid #0055ff' /* Azul forte e grosso! */,
+            outlineOffset:
+              '2px' /* Joga a linha um pouquinho pra fora do card */,
+            borderRadius: '5px'
+          }
+        : { transition: '0.2s' };
+
       return (
         <div key={tile.id}>
           <Tile
+            style={tileStyle}
             backgroundColor={tile.backgroundColor}
-            borderColor={tile.borderColor}
+            borderColor={isArduinoFocused ? '#0000FF' : tile.borderColor} // Borda Azul se focado
             variant={variant}
             onClick={e => {
               e.stopPropagation();
@@ -252,16 +397,33 @@ export class Board extends Component {
       isSelecting,
       isSaving,
       selectedTileIds,
-      displaySettings
+      displaySettings,
+      board
     } = this.props;
 
     const isSelected = selectedTileIds.includes(tile.id);
     const variant = Boolean(tile.loadBoard) ? 'folder' : 'button';
 
+    // Acha o Index deste card para pranchas fixas
+    const index = board.tiles.findIndex(t => t.id === tile.id);
+    const focusedIndex = this.state.arduinoFocusedIndex || 0;
+    const isArduinoFocused = focusedIndex === index && !isSelecting;
+
+    const tileStyle = isArduinoFocused
+      ? {
+          transform: 'scale(1.05)',
+          transition: '0.2s',
+          zIndex: 10,
+          position: 'relative',
+          boxShadow: '0 0 15px rgba(0,0,255,0.6)'
+        }
+      : { transition: '0.2s' };
+
     return (
       <Tile
+        style={tileStyle}
         backgroundColor={tile.backgroundColor}
-        borderColor={tile.borderColor}
+        borderColor={isArduinoFocused ? '#0000FF' : tile.borderColor}
         variant={variant}
         onClick={e => {
           e.stopPropagation();

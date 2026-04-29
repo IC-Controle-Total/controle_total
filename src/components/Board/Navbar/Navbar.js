@@ -37,12 +37,9 @@ export class Navbar extends React.Component {
   handleHomeOrBackClick = () => {
     const { disabled, onBackClick, history } = this.props;
 
-    // O Cboard passa "disabled=true" pro BackButton quando já está na raiz do board.
-    // Então, se estiver "disabled" no contexto do board, nós mandamos o usuário pra Home da sua IC.
     if (disabled) {
       history.push('/');
     } else {
-      // Se não, executa a ação normal de voltar um nível de pasta.
       if (onBackClick) onBackClick();
     }
   };
@@ -50,7 +47,7 @@ export class Navbar extends React.Component {
   render() {
     const {
       className,
-      disabled, // Usaremos essa prop para saber se estamos na raiz
+      disabled,
       isScannerActive,
       onDeactivateScannerClick
     } = this.props;
@@ -63,8 +60,9 @@ export class Navbar extends React.Component {
               onFocus={this.onScannableFocus('backButton')}
               onBlur={this.onScannableBlur('backButton')}
             >
-              {/* Nosso Botão Customizado de Voltar / Home */}
+              {/* === NOSSO ID btn-home AQUI === */}
               <Button
+                id="btn-home"
                 color="inherit"
                 onClick={this.handleHomeOrBackClick}
                 startIcon={disabled ? <HomeIcon /> : <ArrowBackIcon />}
@@ -90,7 +88,18 @@ export class Navbar extends React.Component {
 
         <div className="Navbar__group Navbar__group--end">
           <React.Fragment>
-            {!isCordova() && <FullScreenButton />}
+            {/* === NOSSO ID btn-tela-cheia AQUI (envolvido em uma div para garantir que o contorno e o clique funcionem) === */}
+            {!isCordova() && (
+              <div
+                id="btn-tela-cheia"
+                onClick={e => {
+                  const btn = e.currentTarget.querySelector('button');
+                  if (btn) btn.click();
+                }}
+              >
+                <FullScreenButton />
+              </div>
+            )}
           </React.Fragment>
         </div>
       </div>
