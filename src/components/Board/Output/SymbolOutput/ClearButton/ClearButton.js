@@ -6,9 +6,6 @@ import { Scannable } from 'react-scannable';
 
 export class ClearButton extends Component {
   static propTypes = {
-    /**
-     * @ignore
-     */
     hidden: PropTypes.bool
   };
 
@@ -23,11 +20,13 @@ export class ClearButton extends Component {
             increaseOutputButtons ? 'Output__button__lg' : 'Output__button__sm'
           }
           {...other}
+          style={{ color: 'red' }} // 👉 deixa o botão vermelho
         >
           <ClearIcon
             className={
               increaseOutputButtons ? 'Output__icon__lg' : 'Output__icon__sm'
             }
+            style={{ color: 'red' }} // 👉 deixa o ícone vermelho
           />
         </IconButton>
       </Scannable>

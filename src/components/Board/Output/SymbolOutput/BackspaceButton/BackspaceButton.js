@@ -7,11 +7,7 @@ import { Scannable } from 'react-scannable';
 
 export class BackspaceButton extends Component {
   static propTypes = {
-    /**
-     * @ignore
-     */
     theme: PropTypes.object,
-
     hidden: PropTypes.bool
   };
 
@@ -19,7 +15,10 @@ export class BackspaceButton extends Component {
     const { theme, hidden, increaseOutputButtons, ...other } = this.props;
 
     const backspaceIconStyle =
-      theme.direction === 'ltr' ? null : { transform: 'scaleX(-1)' };
+      theme.direction === 'ltr'
+        ? { color: '#1976d2' } // azul padrão Material-UI
+        : { transform: 'scaleX(-1)', color: '#1976d2' };
+
     return (
       <Scannable disabled={hidden}>
         <IconButton
@@ -28,6 +27,7 @@ export class BackspaceButton extends Component {
             increaseOutputButtons ? 'Output__button__lg' : 'Output__button__sm'
           }
           {...other}
+          style={{ color: '#1976d2' }} // deixa o botão azul
         >
           <BackspaceIcon
             className={
