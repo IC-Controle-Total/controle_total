@@ -66,12 +66,14 @@ export class OutputContainer extends Component {
 
   componentDidMount() {
     document.addEventListener('keydown', this.handleRepeatLastSpokenSentence);
+    document.addEventListener('keydown', this.handleSpeakShortcut); // Parte nova para reconhecer 'F' btao falar
   }
   componentWillUnmount() {
     document.removeEventListener(
       'keydown',
       this.handleRepeatLastSpokenSentence
     );
+    document.removeEventListener('keydown', this.handleSpeakShortcut); // Parte nova para reconhecer 'F' btao falar
   }
 
   outputReducer(accumulator, currentValue) {
@@ -253,6 +255,19 @@ export class OutputContainer extends Component {
       this.speakOutput(text);
     }
   };
+
+  handleSpeakShortcut = event => {
+    console.log('Tecla pressionada:', event.key); // parte de debug para verificar se a tecla está sendo detectada
+    // evita ativar enquanto digita texto
+    const target = event.target.tagName.toLowerCase();
+    if (target === 'input' || target === 'textarea') return; // Faz ignorar o comando quando estiver digitando em campos de texto
+
+    if (event.key.toLowerCase() === 'f') {
+      console.log('Tecla F detectada!'); // parte de debug para verificar se a tecla está sendo detectada
+      event.preventDefault();
+      this.play();
+    }
+  }; // Parte nova para reconhecer 'F' btao falar
 
   handleOutputClick = event => {
     const targetEl = event.target;
