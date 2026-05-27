@@ -124,6 +124,17 @@ export class Board extends Component {
   handleArduinoKeys = event => {
     if (this.props.isSelecting || this.state.openTitleDialog) return;
 
+    // === SISTEMA ANTI-SPAM (COOLDOWN) PARA O ENTER ===
+    if (event.key === 'Enter') {
+      const agora = Date.now();
+      // Se apertou Enter há menos de 600 milissegundos (0.6 segundos), o sistema ignora!
+      if (this.lastEnterTime && agora - this.lastEnterTime < 600) {
+        return;
+      }
+      this.lastEnterTime = agora;
+    }
+    // =================================================
+
     // Bloqueia a barra de rolagem nativa para TODAS as setas
     if (
       ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(event.key)
@@ -212,7 +223,18 @@ export class Board extends Component {
             this.setState({ arduinoFocusedIndex: 0, arduinoZone: 2 });
         }
       }
-      this.setState({ arduinoFocusedIndex });
+      this.setState({ arduinoFocusedIndex }, () => {
+        // Assim que o foco mudar, procuramos o card pelo ID na tela
+        const cardNaTela = document.getElementById(
+          `arduino-card-${arduinoFocusedIndex}`
+        );
+
+        if (cardNaTela) {
+          // Faz a tela rolar suavemente até ele!
+          // O 'nearest' faz rolar só o necessário para o card aparecer.
+          cardNaTela.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
     }
     // --- ZONA 1: BARRA PRETA ---
     else if (arduinoZone === 1) {
@@ -234,8 +256,12 @@ export class Board extends Component {
         this.setState({ arduinoTopIndex });
         updateTopVisuals(1, arduinoTopIndex);
       } else if (event.key === 'Enter') {
-        const btn = document.getElementById(zone1Buttons[arduinoTopIndex]);
-        if (btn) btn.click();
+        const wrapper = document.getElementById(zone1Buttons[arduinoTopIndex]);
+        if (wrapper) {
+          // Acha o botão real dentro da div (ou clica nela mesma se já for o botão)
+          const btn = wrapper.querySelector('button') || wrapper;
+          btn.click();
+        }
       }
     }
     // --- ZONA 0: BARRA BRANCA ---
@@ -255,8 +281,12 @@ export class Board extends Component {
         this.setState({ arduinoTopIndex });
         updateTopVisuals(0, arduinoTopIndex);
       } else if (event.key === 'Enter') {
-        const btn = document.getElementById(zone0Buttons[arduinoTopIndex]);
-        if (btn) btn.click();
+        const wrapper = document.getElementById(zone0Buttons[arduinoTopIndex]);
+        if (wrapper) {
+          // Acha o botão real dentro da div (ou clica nela mesma se já for o botão)
+          const btn = wrapper.querySelector('button') || wrapper;
+          btn.click();
+        }
       }
     }
   };
@@ -354,7 +384,7 @@ export class Board extends Component {
         : { transition: '0.2s' };
 
       return (
-        <div key={tile.id}>
+        <div key={tile.id} id={`arduino-card-${index}`}>
           <Tile
             style={tileStyle}
             backgroundColor={tile.backgroundColor}
@@ -432,7 +462,7 @@ export class Board extends Component {
         onFocus={() => {
           this.handleTileFocus(tile.id);
         }}
-        id={tile.id}
+        id={`arduino-card-${index}`}
       >
         <Symbol
           image={tile.image}

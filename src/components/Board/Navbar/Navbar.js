@@ -92,10 +92,7 @@ export class Navbar extends React.Component {
             {!isCordova() && (
               <div
                 id="btn-tela-cheia"
-                onClick={e => {
-                  const btn = e.currentTarget.querySelector('button');
-                  if (btn) btn.click();
-                }}
+                style={{ display: 'flex', alignItems: 'center' }}
               >
                 <FullScreenButton />
               </div>
