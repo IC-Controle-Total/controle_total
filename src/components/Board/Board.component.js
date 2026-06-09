@@ -126,6 +126,8 @@ export class Board extends Component {
 
     // === SISTEMA ANTI-SPAM (COOLDOWN) PARA O ENTER ===
     if (event.key === 'Enter') {
+      event.preventDefault();
+
       const agora = Date.now();
       // Se apertou Enter há menos de 600 milissegundos (0.6 segundos), o sistema ignora!
       if (this.lastEnterTime && agora - this.lastEnterTime < 600) {
