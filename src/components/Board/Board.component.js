@@ -137,6 +137,34 @@ export class Board extends Component {
     }
     // =================================================
 
+    if (event.key === 'Backspace') {
+      event.preventDefault(); // Evita que o navegador tente voltar a página
+      const btnApagar = document.getElementById('btn-apagar-um');
+      if (btnApagar) {
+        const btn = btnApagar.querySelector('button') || btnApagar;
+        btn.click();
+      }
+      return;
+    }
+
+    if (event.key === 'v' || event.key === 'V') {
+      event.preventDefault();
+      const btnVoltar = document.getElementById('btn-home');
+      if (btnVoltar) {
+        const btn = btnVoltar.querySelector('button') || btnVoltar;
+        btn.click();
+      }
+      return;
+    }
+    // ====================================================
+
+    // Bloqueia a barra de rolagem nativa para TODAS as setas
+    if (
+      ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(event.key)
+    ) {
+      event.preventDefault();
+    }
+
     // Bloqueia a barra de rolagem nativa para TODAS as setas
     if (
       ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(event.key)
