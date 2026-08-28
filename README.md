@@ -1,41 +1,49 @@
-[![DPG Badge](https://img.shields.io/badge/Verified-DPG-3333AB?logo=data:image/svg%2bxml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMSAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjIwMDggMjEuMzY3OEwxMC4xNzM2IDE4LjAxMjRMMTEuNTIxOSAxNi40MDAzTDEzLjk5MjggMTguNDU5TDE5LjYyNjkgMTIuMjExMUwyMS4xOTA5IDEzLjYxNkwxNC4yMDA4IDIxLjM2NzhaTTI0LjYyNDEgOS4zNTEyN0wyNC44MDcxIDMuMDcyOTdMMTguODgxIDUuMTg2NjJMMTUuMzMxNCAtMi4zMzA4MmUtMDVMMTEuNzgyMSA1LjE4NjYyTDUuODU2MDEgMy4wNzI5N0w2LjAzOTA2IDkuMzUxMjdMMCAxMS4xMTc3TDMuODQ1MjEgMTYuMDg5NUwwIDIxLjA2MTJMNi4wMzkwNiAyMi44Mjc3TDUuODU2MDEgMjkuMTA2TDExLjc4MjEgMjYuOTkyM0wxNS4zMzE0IDMyLjE3OUwxOC44ODEgMjYuOTkyM0wyNC44MDcxIDI5LjEwNkwyNC42MjQxIDIyLjgyNzdMMzAuNjYzMSAyMS4wNjEyTDI2LjgxNzYgMTYuMDg5NUwzMC42NjMxIDExLjExNzdMMjQuNjI0MSA5LjM1MTI3WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==)](https://digitalpublicgoods.net/r/cboard)
+[![DPG Badge](https://img.shields.io/badge/Verified-DPG-3333AB?logo=data:image/svg%2bxml;base64,PHN2ZyB3aWR0aD0iMzEiIGhlaWdodD0iMzMiIHZpZXdCb3g9IjAgMCAzMSAzMyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE0LjIwMDggMjEuMzY3OEwxMC4xNzM2IDE4LjAxMjRMMTEuNTIxOSAxNi40MDAzTDEzLjk5MjggMTguNDU5TDE5LjYyNjkgMTIuMjExMUwyMS4xOTA5IDEzLjYxNkwxNC4yMDA4IDIxLjM2NzhaTTI0LjIwMDggMzMuMDcyOUMyMC44NTk1IDMzLjA3MjkgMjYuMjQ2OSAzMC40NTE2IDI5LjE0MTcgMjYuMzEyOUwyNC44MDcxIDI5LjEwNkwyNC42MjQxIDIyLjgyNzdMMzAuNjYzMSAyMS4wNjEyTDI2LjgxNzYgMTYuMDg5NUwzMC42NjMxIDExLjExNzdMMjQuNjI0MSA5LjM1MTI3TDI0LjgwNzEgMy4wNzI5N0wyNi4yNDY5IDIuNjIwMThDMjAuODU5NSAtMS40MTg0NCAxNC4yMDA4IC0xLjQxODQ0IDguODUzMzMgMi42MjAxOEw1Ljg1NjAxIDMuMDcyOTdMNi4wMzkwNiA5LjM1MTI3TDAgMTEuMTE3N0wzLjg0NTIxIDE2LjA4OTVMMCAyMS4wNjEyTDYuMDM5MDYgMjIuODI3N0w1Ljg1NjAxIDI5LjEwNkwxMS43ODIxIDI2Ljk5MjNMMTQuMjAwOCAzMy4wNzI5WiIgZmlsbD0id2hpdGUiLz4KPC9zdmc+Cg==)](https://digitalpublicgoods.net/r/cboard)
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/cboard/localized.svg)](https://crowdin.com/project/cboard)
-[![Backers on Open Collective](https://opencollective.com/cboard/backers/badge.svg)](#backers)
-[![Sponsors on Open Collective](https://opencollective.com/cboard/sponsors/badge.svg)](#sponsors)
-[![cboard-org](https://circleci.com/gh/cboard-org/cboard.svg?style=shield)](https://app.circleci.com/pipelines/github/cboard-org/cboard)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-# Cboard - AAC Communication Board for browsers
+# Controle Total (Baseado no Cboard) ♿
+
+**Projeto de Iniciação Científica - Apresentado na FETIN (Feira Tecnológica do Inatel)**
+
+O **Controle Total** é uma solução de acessibilidade que integra um hardware customizado a um software de Comunicação Aumentativa e Alternativa (CAA). O projeto foi desenvolvido de forma aplicada para atender às necessidades motoras e de fala de usuários com paralisia cerebral, promovendo comunicação, autonomia e inclusão.
+
+👨‍🔬 **Equipe (Inatel):**
+
+- Gabriel Machado Pivoto
+- Letícia Geovana Garcia
+- Júlia Gonçalves Rocha Garcia
+- Maria Clara Ribeiro Coura
+- Ana Luiza Grell de Souza
+- **Orientador:** Prof. Filipe Bueno Vilela
+- **Coorientador:** Rita Elizabeth Santos de Almeida
+- **Apoio/Fomento:** FAPEMIG
+
+⚠️ **Aviso de Modificação e Créditos:** Este projeto é uma versão modificada, estendida e integrada com hardware do incrível projeto open-source [Cboard](https://github.com/cboard-org/cboard). Nós adaptamos o software original para receber comandos do nosso hardware dedicado, focando inteiramente nas necessidades reais do nosso usuário.
+
+---
+
+## 🚀 O que nós construímos (Nossas Modificações)
+
+Nosso projeto não é apenas software, é a união do mundo físico com o digital:
+
+- **Hardware Customizado:** Desenvolvemos uma interface física em MDF, adaptada às limitações motoras do paciente. A estrutura possui botões de alta resistência com espaçamento ergonômico, projetada para absorver impactos (espasmos) e fixar-se com segurança à mesa de uso.
+- **Integração de Sinais:** O hardware se comunica com o software através de uma placa Arduino, que emula comandos de teclado (_KeyEvents_ como setas de navegação, Enter, Backspace e atalhos customizados). Isso permite o controle 100% autônomo do sistema sem necessidade de toque na tela.
+- **Adaptações na Interface (UX/UI e Lógica):** O software original sofreu profundas alterações para respeitar o tempo de reação e a fadiga do paciente:
+  - **Barra de Acúmulo de Voz:** Fim da emissão sonora imediata. O usuário seleciona os cards no próprio ritmo, e a síntese de voz (TTS) só é disparada ao acionar o botão global "Falar", reduzindo a ansiedade.
+  - **Confinamento de Foco (_Focus Trapping_):** Restrição da navegação do hardware apenas à área útil dos cards, evitando que o paciente gaste esforço motor navegando por menus superiores.
+  - **Redução de Carga Cognitiva:** Limpeza visual da interface, remoção de menus secundários (impressão, configurações complexas) e distanciamento estratégico de botões críticos (ex: "Apagar Card" vs "Apagar Tudo") para prevenir erros por movimentos involuntários.
+  - **Hospedagem em Nuvem:** O sistema foi preparado para _deploy_ na plataforma Vercel, eliminando instalações locais e permitindo acesso rápido via link de navegador em qualquer tablet ou computador.
+
+---
+
+_(Abaixo, mantemos as instruções originais do Cboard para desenvolvedores que desejam compilar e rodar a base do sistema localmente)._
+
+## 💻 Sobre o Cboard Original
 
 [Cboard](https://app.cboard.io) is an augmentative and alternative communication (AAC) web application, allowing users with speech and language impairments (autism, cerebral palsy) to communicate with symbols and text-to-speech.
 
-![Cboard GIF demo](public/videos/demo.gif)
-
-The app uses the browser's Speech Synthesis API to generate speech when a symbol is clicked. There are thousands of symbols from the most popular AAC symbol libraries to choose from when creating a board. Cboard is available in 40 languages (support varies by platform - Android, iOS, Windows).
-
-**We're using Discord to collaborate, join us at: https://discord.gg/TEH8uxh**
-
-## How does it work?
-
-This video shows Srna. She is one of the children who have received the Cboard Communicator thanks to UNICEF’s ["For every child, a voice"](https://www.unicef.org/innovation/stories/giving-every-child-voice-aac-technology) project.
-
-<a href="https://youtu.be/wqLauXnyLhY"><img src="https://img.youtube.com/vi/wqLauXnyLhY/0.jpg" alt="Real Look Autism Episode 8" width="480" height="360"></a>
-
-## Translations
-
-The app supports 40 languages.
-Languages were machine translated and require proofreading: if you want to help proofread, please use our translation management platform: https://crowdin.com/project/cboard
-
-**You do not need to be a programmer!**
-
-Translations play a major role in this project and they contribute a lot for the inclusion of children, specially in non developed countries. Please consider collaborating with us!
-
-### Translations for developers
-
-To add support to a new language, [follow this guide](https://github.com/cboard-org/cboard/wiki/How-to-Add-a-New-Language).
-
-#### Pulling translations from CrowdIn
-
-In order to pull the latest translations from CrowdIn into the codebase, you can run `yarn translations:pull`. This will update all language files such as `en.json` as well as the central `cboard.json` file. Please note that this requires the CrowdIn API key to be available in the `.private` config file. Refer to [Secrets Management](#secrets-management). After the script completes, changes to the translation files will need to be committed to the repo by the usual process.
+The app uses the browser's Speech Synthesis API to generate speech when a symbol is clicked. There are thousands of symbols from the most popular AAC symbol libraries to choose from when creating a board.
 
 ## Getting Started
 
@@ -49,97 +57,29 @@ You will see the build errors and lint warnings in the console.
 
 ### `yarn test`
 
-Runs the test watcher in an interactive mode.<br>
-By default, runs tests related to files changed since the last commit.
-
-[Read more about testing.](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md#running-tests)
+Runs the test watcher in an interactive mode.
 
 ### `yarn build`
 
 Builds the app for production to the `build` folder.<br>
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.<br>
-By default, it also [includes a service worker](https://github.com/facebookincubator/create-react-app/blob/master/packages/react-scripts/template/README.md#making-a-progressive-web-app) so that Cboard loads from local cache on future visits.
-
-Cboard is ready to be deployed.
-
-### `yarn build-cordova-debug`
-
-Use this to produce non-minified build for use in debugging within Cordova. It uses `craco` & `craco.config` to customize webpack operation without ejecting react.
-
-See [CCBoard](https://github.com/cboard-org/ccboard) repo for packaging this CBoard application within Cordova.
-
-## Docker getting started
-
-### `make image`
-
-Creates a Docker image with cboard built for production. The image is tagged as cboard:latest.
-
-### `make run`
-
-Runs the cboard:latest Docker image on port 5000.
-
-## Secrets Management
-
-Some external services have APIs we need to access, and these require API keys. To prevent open disclosure of these keys in the public repository, while still tracking them with the code, we encrypt some secrets into a GPG file. These files are `env/local-private.gpg` and `env/prod-private.gpg`.
-
-In order to access the secrets, you must request the `ENCRYPTION_KEY` from @shaycojo and then run the decrypt script: `ENCRYPTION_KEY={key-goes-here} yarn decrypt:local` (or `prod`), which will create the file `.private/local.js` with the secrets in plain text where the scripts can access them. **The files in `.private` should never be committed to the repository.**
-
-If you need to add or change a secret, make the change to the `.private/local.js` file, and then run the encryption script: `ENCRYPTION_KEY={key-goes-here} yarn encrypt:local` (or `prod`).
-
-_Note: These keys/secrets are *not* required to run or develop Cboard._ They are used with scripts by some team members.
-
-## Thanks
+## Thanks (Fontes Originais do Cboard)
 
 ### Symbols sources
 
-<img src="https://mulberrysymbols.org/assets/examples/hello.svg" href="https://mulberrysymbols.org" alt="Mulberry" width="40" height="40"> [Mulberry](https://mulberrysymbols.org/)
+- [Mulberry](https://mulberrysymbols.org/)
+- [ARASAAC](http://www.arasaac.org/)
+- [Global Symbols](https://globalsymbols.com/)
 
-<img src="https://static.arasaac.org/images/arasaac-logo.svg" href="https://mulberrysymbols.org" alt="ARASAAC" width="40" height="40"> [ARASAAC](http://www.arasaac.org/)
-
-<img src="https://globalsymbols.com/assets/logo-with-text-5c57659e34824e7b2907a36895745f9e39e7f1c015ea77d6968eb75a52c8389f.svg" href="https://globalsymbols.com" alt="Global Symbols" width="40" height="40"> [Global Symbols](https://globalsymbols.com/)
-
-### Translation
-
-<img src="https://support.crowdin.com/assets/logos/crowdin-symbol.png" href="https://crowdin.com/" alt="Crowdin" width="40" height="40">[ Crowdin](https://crowdin.com/) - for providing the localization management platform.
-
-### Testing platform
-
-<img src="https://avatars2.githubusercontent.com/u/1119453?s=200&v=4" href="https://www.browserstack.com/" alt="Browserstack" width="40" height="40">[ Browserstack](https://www.browserstack.com/) - for providing the automation infrastructure for testing.
-
-### Development
-
-<img src="./public/images/sponsers/css-tricks.svg" alt="CSS-Tricks" width="120" height="39">[ CSS Tricks](https://css-tricks.com) - for providing feedback and support from the early stage.
-
-## Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/cboard-org/cboard/graphs/contributors"><img src="https://opencollective.com/cboard/contributors.svg?width=890&button=false" /></a>
-
-## Backers
-
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/cboard#backer)]
-
-<a href="https://opencollective.com/cboard#backers" target="_blank"><img src="https://opencollective.com/cboard/backers.svg?width=890"></a>
-
-## Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/cboard#sponsor)]
-
-<a href="https://opencollective.com/cboard/sponsor/0/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/0/avatar.svg"></a>
-<a href="https://opencollective.com/cboard/sponsor/1/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/1/avatar.svg"></a>
-<a href="https://opencollective.com/cboard/sponsor/2/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/2/avatar.svg"></a>
-<a href="https://opencollective.com/cboard/sponsor/3/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/3/avatar.svg"></a>
-<a href="https://opencollective.com/cboard/sponsor/4/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/4/avatar.svg"></a>
-<a href="https://opencollective.com/cboard/sponsor/5/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/5/avatar.svg"></a>
-<a href="https://opencollective.com/cboard/sponsor/6/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/6/avatar.svg"></a>
-<a href="https://opencollective.com/cboard/sponsor/7/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/7/avatar.svg"></a>
-<a href="https://opencollective.com/cboard/sponsor/8/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/8/avatar.svg"></a>
-<a href="https://opencollective.com/cboard/sponsor/9/website" target="_blank"><img src="https://opencollective.com/cboard/sponsor/9/avatar.svg"></a>
+---
 
 ## :memo: Legal & licenses
 
+**Modificações do Controle Total (Hardware e Software integrado):**
+Copyright © 2024-2026, Gabriel, Letícia, Julia, Maria, Ana & Inatel.
+
+**Software Original (Cboard):**
 Copyright © 2017-2024, Assistive Technology LLC & Cboard contributors.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License version 3 as published by the Free Software Foundation.
