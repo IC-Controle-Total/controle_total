@@ -1,113 +1,87 @@
 import React, { useRef, useState } from 'react';
 import { connect } from 'react-redux';
+import { injectIntl } from 'react-intl';
 import shortid from 'shortid';
-import { readAndCompressImage } from 'browser-image-resizer';
-import { Button, TextField } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import { Button } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import FolderIcon from '@material-ui/icons/Folder';
 import { createTile, editTiles, deleteTiles } from '../../Board/Board.actions';
+import FormularioItem, { PreviaCard } from './FormularioItem.component';
+import EscolherPastaDialog from './EscolherPastaDialog.component';
+import {
+  CORES,
+  criarPasta,
+  obterPastas,
+  obterRootBoardId
+} from './GerenciarCards.helpers';
 
 import './GerenciarCards.css';
 
-// Mesmas cores usadas nos cards padrão da tela de Cards
-const CORES = [
-  { nome: 'Azul', valor: 'rgb(187, 222, 251)' },
-  { nome: 'Amarelo', valor: 'rgb(255, 241, 118)' },
-  { nome: 'Verde', valor: 'rgb(200, 230, 201)' },
-  { nome: 'Laranja', valor: 'rgb(255, 224, 178)' },
-  { nome: 'Rosa', valor: 'rgb(248, 187, 208)' },
-  { nome: 'Branco', valor: 'rgb(255, 255, 255)' }
-];
+const FORMULARIO_VAZIO = { nome: '', imagem: '', cor: CORES[0].valor };
 
-// A foto é reduzida antes de salvar para não pesar no armazenamento do navegador
-const CONFIG_IMAGEM = {
-  quality: 0.8,
-  maxWidth: 400,
-  maxHeight: 400,
-  autoRotate: true,
-  debug: false,
-  mimeType: 'image/jpeg'
-};
-
-const FORMULARIO_VAZIO = {
-  id: null,
-  nome: '',
-  imagem: '',
-  cor: CORES[0].valor
-};
-
-const blobParaDataUrl = blob =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
-  });
-
-const GerenciarCards = ({ rootBoardId, cards, dispatch }) => {
+const GerenciarCards = ({
+  rootBoardId,
+  pastas,
+  cards,
+  nomesBoards,
+  dispatch
+}) => {
   const [formulario, setFormulario] = useState(FORMULARIO_VAZIO);
-  const [carregandoImagem, setCarregandoImagem] = useState(false);
+  // Card que está sendo editado (null quando está criando um novo)
+  const [cardEditado, setCardEditado] = useState(null);
+  // null = fechado; { card } = mudar o card de pasta; {} = novo card
+  const [dialogo, setDialogo] = useState(null);
   const [erro, setErro] = useState('');
-  const inputFotoRef = useRef(null);
+  const [aviso, setAviso] = useState('');
   const formularioRef = useRef(null);
 
-  const editando = formulario.id !== null;
+  const nomeDoLocal = boardId =>
+    boardId === rootBoardId
+      ? 'Tela inicial'
+      : nomesBoards[boardId] || 'Outra pasta';
 
   const limparFormulario = () => {
     setFormulario(FORMULARIO_VAZIO);
+    setCardEditado(null);
     setErro('');
-    if (inputFotoRef.current) inputFotoRef.current.value = '';
   };
 
-  const escolherFoto = async event => {
-    const arquivo = event.target.files && event.target.files[0];
-    if (!arquivo) return;
-
-    setCarregandoImagem(true);
-    setErro('');
-    try {
-      const blob = await readAndCompressImage(arquivo, CONFIG_IMAGEM);
-      const imagem = await blobParaDataUrl(blob);
-      setFormulario(prev => ({ ...prev, imagem }));
-    } catch (err) {
-      console.error(err);
-      setErro('Não foi possível carregar a foto. Tente outra imagem.');
-    } finally {
-      setCarregandoImagem(false);
-    }
-  };
-
-  const salvarCard = event => {
-    event.preventDefault();
-    const nome = formulario.nome.trim();
-
-    if (!nome) {
-      setErro('Dê um nome para o card.');
-      return;
-    }
-    if (!formulario.imagem) {
-      setErro('Escolha uma foto para o card.');
+  const salvarCard = () => {
+    setAviso('');
+    if (!cardEditado) {
+      // Antes de criar, pergunta em qual pasta o card vai ficar
+      setDialogo({});
       return;
     }
 
-    if (editando) {
-      const cardOriginal = cards.find(card => card.id === formulario.id);
-      dispatch(
-        editTiles(
-          [
-            {
-              ...cardOriginal,
-              label: nome,
-              image: formulario.imagem,
-              backgroundColor: formulario.cor
-            }
-          ],
-          rootBoardId
-        )
-      );
+    dispatch(
+      editTiles(
+        [
+          {
+            ...cardEditado.tile,
+            label: formulario.nome.trim(),
+            image: formulario.imagem,
+            backgroundColor: formulario.cor
+          }
+        ],
+        cardEditado.boardId
+      )
+    );
+    setAviso(`Card "${formulario.nome.trim()}" atualizado.`);
+    limparFormulario();
+  };
+
+  const colocarNaPasta = (boardId, nomeLocal = nomeDoLocal(boardId)) => {
+    if (dialogo.card) {
+      const { tile, boardId: boardAnterior } = dialogo.card;
+      if (boardId !== boardAnterior) {
+        dispatch(deleteTiles([tile.id], boardAnterior));
+        dispatch(createTile(tile, boardId));
+      }
+      setAviso(`Card "${tile.label}" agora está em: ${nomeLocal}.`);
     } else {
+      const nome = formulario.nome.trim();
       dispatch(
         createTile(
           {
@@ -117,149 +91,64 @@ const GerenciarCards = ({ rootBoardId, cards, dispatch }) => {
             backgroundColor: formulario.cor,
             personalizado: true
           },
-          rootBoardId
+          boardId
         )
       );
+      setAviso(`Card "${nome}" criado em: ${nomeLocal}.`);
+      limparFormulario();
     }
+    setDialogo(null);
+  };
 
-    limparFormulario();
+  const criarPastaENela = nome => {
+    const imagem = dialogo.card ? dialogo.card.tile.image : formulario.imagem;
+    const boardId = criarPasta(dispatch, rootBoardId, {
+      nome,
+      imagem,
+      cor: CORES[0].valor
+    });
+    colocarNaPasta(boardId, nome);
   };
 
   const editarCard = card => {
+    setCardEditado(card);
     setFormulario({
-      id: card.id,
-      nome: card.label || '',
-      imagem: card.image || '',
-      cor: card.backgroundColor || CORES[0].valor
+      nome: card.tile.label || '',
+      imagem: card.tile.image || '',
+      cor: card.tile.backgroundColor || CORES[0].valor
     });
     setErro('');
+    setAviso('');
     if (formularioRef.current) {
       formularioRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   const excluirCard = card => {
-    const confirmou = window.confirm(`Excluir o card "${card.label}"?`);
+    const confirmou = window.confirm(`Excluir o card "${card.tile.label}"?`);
     if (!confirmou) return;
 
-    dispatch(deleteTiles([card.id], rootBoardId));
-    if (formulario.id === card.id) limparFormulario();
+    dispatch(deleteTiles([card.tile.id], card.boardId));
+    if (cardEditado && cardEditado.tile.id === card.tile.id) {
+      limparFormulario();
+    }
   };
 
   return (
     <div className="gerenciar-cards">
-      <form
+      <FormularioItem
         ref={formularioRef}
-        className="gerenciar-cards-formulario"
+        id="gerenciar-cards"
+        valores={formulario}
+        onChange={setFormulario}
         onSubmit={salvarCard}
-      >
-        <h2>{editando ? 'Editar card' : 'Criar novo card'}</h2>
+        onCancelar={limparFormulario}
+        editando={!!cardEditado}
+        erro={erro}
+        setErro={setErro}
+      />
 
-        <div className="gerenciar-cards-formulario-corpo">
-          <div className="gerenciar-cards-campos">
-            <TextField
-              id="gerenciar-cards-nome"
-              label="Nome do card"
-              placeholder="Ex: Hora do banho"
-              variant="outlined"
-              fullWidth
-              value={formulario.nome}
-              inputProps={{ maxLength: 40 }}
-              onChange={e =>
-                setFormulario({ ...formulario, nome: e.target.value })
-              }
-            />
-
-            <div>
-              <input
-                ref={inputFotoRef}
-                type="file"
-                accept="image/*"
-                id="gerenciar-cards-foto"
-                style={{ display: 'none' }}
-                onChange={escolherFoto}
-              />
-              <label htmlFor="gerenciar-cards-foto">
-                <Button
-                  variant="outlined"
-                  color="primary"
-                  component="span"
-                  startIcon={<PhotoCameraIcon />}
-                  disabled={carregandoImagem}
-                  className="gerenciar-cards-botao-foto"
-                >
-                  {carregandoImagem
-                    ? 'Carregando...'
-                    : formulario.imagem
-                    ? 'Trocar foto'
-                    : 'Escolher foto'}
-                </Button>
-              </label>
-            </div>
-
-            <div>
-              <p className="gerenciar-cards-rotulo">Cor do card</p>
-              <div className="gerenciar-cards-cores">
-                {CORES.map(cor => (
-                  <button
-                    key={cor.valor}
-                    type="button"
-                    title={cor.nome}
-                    aria-label={cor.nome}
-                    className={
-                      formulario.cor === cor.valor
-                        ? 'gerenciar-cards-cor selecionada'
-                        : 'gerenciar-cards-cor'
-                    }
-                    style={{ backgroundColor: cor.valor }}
-                    onClick={() =>
-                      setFormulario({ ...formulario, cor: cor.valor })
-                    }
-                  />
-                ))}
-              </div>
-            </div>
-
-            {erro && <p className="gerenciar-cards-erro">{erro}</p>}
-
-            <div className="gerenciar-cards-acoes">
-              <Button
-                type="submit"
-                variant="contained"
-                startIcon={editando ? <EditIcon /> : <AddIcon />}
-                className="gerenciar-cards-botao-salvar"
-                disabled={carregandoImagem}
-              >
-                {editando ? 'Salvar alterações' : 'Criar card'}
-              </Button>
-              {editando && (
-                <Button variant="outlined" onClick={limparFormulario}>
-                  Cancelar
-                </Button>
-              )}
-            </div>
-          </div>
-
-          <div className="gerenciar-cards-previa">
-            <p className="gerenciar-cards-rotulo">Prévia</p>
-            <div
-              className="gerenciar-cards-card"
-              style={{ backgroundColor: formulario.cor }}
-            >
-              <div className="gerenciar-cards-card-imagem">
-                {formulario.imagem ? (
-                  <img src={formulario.imagem} alt="" />
-                ) : (
-                  <span>Sem foto</span>
-                )}
-              </div>
-              <span className="gerenciar-cards-card-nome">
-                {formulario.nome.trim() || 'Nome do card'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </form>
+      {aviso && <p className="gerenciar-cards-aviso">{aviso}</p>}
 
       <h2 className="gerenciar-cards-titulo-lista">
         Cards criados ({cards.length})
@@ -267,22 +156,22 @@ const GerenciarCards = ({ rootBoardId, cards, dispatch }) => {
 
       {cards.length === 0 ? (
         <p className="gerenciar-cards-vazio">
-          Nenhum card criado ainda. Os cards criados aqui aparecem no final da
-          tela de Cards.
+          Nenhum card criado ainda. Ao criar um card você escolhe em qual pasta
+          da tela de Cards ele vai aparecer.
         </p>
       ) : (
         <div className="gerenciar-cards-lista">
           {cards.map(card => (
-            <div key={card.id} className="gerenciar-cards-item">
-              <div
-                className="gerenciar-cards-card"
-                style={{ backgroundColor: card.backgroundColor }}
-              >
-                <div className="gerenciar-cards-card-imagem">
-                  <img src={card.image} alt="" />
-                </div>
-                <span className="gerenciar-cards-card-nome">{card.label}</span>
-              </div>
+            <div key={card.tile.id} className="gerenciar-cards-item">
+              <PreviaCard
+                nome={card.tile.label}
+                imagem={card.tile.image}
+                cor={card.tile.backgroundColor}
+              />
+              <span className="gerenciar-cards-local">
+                <FolderIcon fontSize="small" />
+                {nomeDoLocal(card.boardId)}
+              </span>
               <div className="gerenciar-cards-item-acoes">
                 <Button
                   size="small"
@@ -292,6 +181,15 @@ const GerenciarCards = ({ rootBoardId, cards, dispatch }) => {
                   onClick={() => editarCard(card)}
                 >
                   Editar
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="primary"
+                  startIcon={<FolderIcon />}
+                  onClick={() => setDialogo({ card })}
+                >
+                  Mudar pasta
                 </Button>
                 <Button
                   size="small"
@@ -307,20 +205,49 @@ const GerenciarCards = ({ rootBoardId, cards, dispatch }) => {
           ))}
         </div>
       )}
+
+      <EscolherPastaDialog
+        open={!!dialogo}
+        titulo={
+          dialogo && dialogo.card
+            ? `Para onde mover o card "${dialogo.card.tile.label}"?`
+            : 'Onde colocar este card?'
+        }
+        rootBoardId={rootBoardId}
+        pastas={pastas}
+        pastaAtual={dialogo && dialogo.card ? dialogo.card.boardId : null}
+        onEscolher={colocarNaPasta}
+        onCriarPasta={criarPastaENela}
+        onFechar={() => setDialogo(null)}
+      />
     </div>
   );
 };
 
-const mapStateToProps = state => {
-  const { communicators, activeCommunicatorId } = state.communicator;
-  const communicator = communicators.find(c => c.id === activeCommunicatorId);
-  const rootBoardId = communicator ? communicator.rootBoard : 'root';
-  const rootBoard = state.board.boards.find(b => b.id === rootBoardId);
+const mapStateToProps = (state, { intl }) => {
+  const pastas = obterPastas(state, intl);
+  const nomesBoards = {};
+  const cards = [];
+
+  state.board.boards.forEach(board => {
+    nomesBoards[board.id] = board.name;
+    (board.tiles || []).forEach(tile => {
+      if (tile.personalizado && !tile.loadBoard) {
+        cards.push({ tile, boardId: board.id });
+      }
+    });
+  });
+  // Nome da pasta como aparece na tela de Cards
+  pastas.forEach(pasta => {
+    nomesBoards[pasta.boardId] = pasta.nome;
+  });
 
   return {
-    rootBoardId,
-    cards: rootBoard ? rootBoard.tiles.filter(tile => tile.personalizado) : []
+    rootBoardId: obterRootBoardId(state),
+    pastas,
+    cards,
+    nomesBoards
   };
 };
 
-export default connect(mapStateToProps)(GerenciarCards);
+export default injectIntl(connect(mapStateToProps)(GerenciarCards));

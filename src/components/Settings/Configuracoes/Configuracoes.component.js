@@ -3,28 +3,32 @@ import { Button } from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import RecordVoiceOverIcon from '@material-ui/icons/RecordVoiceOver';
 import ViewModuleIcon from '@material-ui/icons/ViewModule';
+import CreateNewFolderIcon from '@material-ui/icons/CreateNewFolder';
 import VoiceSelector from '../VoiceSelector/VoiceSelector.component';
 import GerenciarCards from '../GerenciarCards/GerenciarCards.component';
+import GerenciarPastas from '../GerenciarCards/GerenciarPastas.component';
 
 import './Configuracoes.css';
 
 const ABAS = [
   { id: 'voz', nome: 'Voz', icone: <RecordVoiceOverIcon /> },
-  { id: 'cards', nome: 'Criar cards', icone: <ViewModuleIcon /> }
+  { id: 'cards', nome: 'Criar cards', icone: <ViewModuleIcon /> },
+  { id: 'pastas', nome: 'Criar pastas', icone: <CreateNewFolderIcon /> }
 ];
 
 const Configuracoes = ({ history }) => {
   const [abaAtiva, setAbaAtiva] = useState('voz');
 
-  // Atalhos do hardware para voltar. Na aba de cards são ignorados enquanto
-  // se digita em um campo de texto.
+  // Atalhos do hardware para voltar. São ignorados enquanto se digita em um
+  // campo de texto ou com uma janela (como a de escolher pasta) aberta.
   useEffect(
     () => {
       const handleKeyDown = event => {
         const digitando = ['INPUT', 'TEXTAREA'].includes(
           document.activeElement && document.activeElement.tagName
         );
-        if (digitando) return;
+        const janelaAberta = !!document.querySelector('[role="dialog"]');
+        if (digitando || janelaAberta) return;
 
         if (event.key.toLowerCase() === 'v' || event.key === 'Escape') {
           event.preventDefault();
@@ -75,6 +79,7 @@ const Configuracoes = ({ history }) => {
 
         {abaAtiva === 'voz' && <VoiceSelector history={history} embedded />}
         {abaAtiva === 'cards' && <GerenciarCards />}
+        {abaAtiva === 'pastas' && <GerenciarPastas />}
       </div>
     </div>
   );
