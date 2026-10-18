@@ -12,9 +12,11 @@ import {
 
 import './VoiceSelector.css';
 
-const VoiceSelector = ({ history, dispatch }) => {
+const VoiceSelector = ({ history, dispatch, embedded = false }) => {
   // Navegação 2D: Linha (0=Voltar, 1 a 4=Cards) e Coluna (0=Ouvir, 1=Selecionar)
-  const [selectedRow, setSelectedRow] = useState(0);
+  // Dentro da tela de Configurações (embedded) o Voltar fica no cabeçalho dela
+  const primeiraLinha = embedded ? 1 : 0;
+  const [selectedRow, setSelectedRow] = useState(primeiraLinha);
   const [focusedAction, setFocusedAction] = useState(1); // 1 = Selecionar (padrão), 0 = Ouvir
 
   const [vozAtivaSistema, setVozAtivaSistema] = useState(null);
@@ -127,7 +129,7 @@ const VoiceSelector = ({ history, dispatch }) => {
     () => {
       const handleKeyDown = event => {
         // Atalho rápido para voltar
-        if (event.key.toLowerCase() === 'v') {
+        if (!embedded && event.key.toLowerCase() === 'v') {
           event.preventDefault();
           history.goBack();
           return;
@@ -136,11 +138,11 @@ const VoiceSelector = ({ history, dispatch }) => {
         // Navegação Vertical (Cima / Baixo)
         if (event.key === 'ArrowDown') {
           event.preventDefault();
-          setSelectedRow(prev => (prev === 4 ? 0 : prev + 1));
+          setSelectedRow(prev => (prev === 4 ? primeiraLinha : prev + 1));
         }
         if (event.key === 'ArrowUp') {
           event.preventDefault();
-          setSelectedRow(prev => (prev === 0 ? 4 : prev - 1));
+          setSelectedRow(prev => (prev === primeiraLinha ? 4 : prev - 1));
         }
 
         // Navegação Horizontal (Esquerda / Direita dentro do Card)
@@ -170,7 +172,7 @@ const VoiceSelector = ({ history, dispatch }) => {
           }
         }
 
-        if (event.key === 'Escape') {
+        if (!embedded && event.key === 'Escape') {
           history.goBack();
         }
       };
@@ -178,7 +180,7 @@ const VoiceSelector = ({ history, dispatch }) => {
       window.addEventListener('keydown', handleKeyDown);
       return () => window.removeEventListener('keydown', handleKeyDown);
     },
-    [selectedRow, focusedAction, systemVoices, history]
+    [selectedRow, focusedAction, systemVoices, history, embedded, primeiraLinha]
   );
 
   const opcoes = [
@@ -195,6 +197,138 @@ const VoiceSelector = ({ history, dispatch }) => {
       emoji: '👩'
     }
   ];
+
+  const listaDeVozes = (
+    <div
+      className="voice-options"
+      style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
+    >
+      {opcoes.map((opcao, index) => {
+        const rowIdx = index + 1;
+        const isRowFocused = selectedRow === rowIdx;
+        const isAtiva = vozAtivaSistema === rowIdx;
+
+        // Lógica visual para saber qual botão está selecionado no teclado
+        const isOuvirFocused = isRowFocused && focusedAction === 0;
+        const isSelecionarFocused = isRowFocused && focusedAction === 1;
+
+        return (
+          <div
+            key={opcao.nome}
+            ref={element => {
+              voiceRefs.current[index] = element;
+            }}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              backgroundColor: '#ffffff',
+              borderRadius: '12px',
+              padding: '15px 25px',
+              transition: 'all 0.2s ease',
+              boxShadow: isRowFocused
+                ? '0 8px 20px rgba(0,85,255,0.15)'
+                : '0 4px 8px rgba(0,0,0,0.05)',
+              border: isAtiva
+                ? '3px solid #4CAF50'
+                : isRowFocused
+                ? '3px solid #b3d4ff'
+                : '3px solid transparent',
+              transform: isRowFocused ? 'scale(1.02)' : 'scale(1)'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div
+                style={{
+                  fontSize: '40px',
+                  backgroundColor: '#f0f4f8',
+                  borderRadius: '50%',
+                  width: '60px',
+                  height: '60px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {opcao.emoji}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px'
+                  }}
+                >
+                  <h2
+                    style={{
+                      margin: 0,
+                      fontSize: '20px',
+                      color: '#0a2540'
+                    }}
+                  >
+                    {opcao.nome}
+                  </h2>
+                  {isAtiva && <CheckCircleIcon style={{ color: '#4CAF50' }} />}
+                </div>
+                <p
+                  style={{
+                    margin: 0,
+                    color: '#666',
+                    fontSize: '14px',
+                    marginTop: '4px'
+                  }}
+                >
+                  {opcao.descricao}
+                </p>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                startIcon={<VolumeUpIcon />}
+                onClick={e => ouvirAmostra(rowIdx, e)}
+                style={{
+                  borderRadius: '8px',
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  border: isOuvirFocused
+                    ? '3px solid #0055ff'
+                    : '1px solid rgba(0, 0, 0, 0.23)',
+                  backgroundColor: isOuvirFocused ? '#e6f0ff' : 'transparent',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                Ouvir
+              </Button>
+              <Button
+                variant="contained"
+                onClick={e => selecionarESalvarVoz(rowIdx, e)}
+                style={{
+                  backgroundColor: isAtiva ? '#4CAF50' : '#00bcd4',
+                  color: 'white',
+                  borderRadius: '8px',
+                  textTransform: 'none',
+                  fontWeight: 'bold',
+                  boxShadow: 'none',
+                  border: isSelecionarFocused
+                    ? '3px solid #0055ff'
+                    : '3px solid transparent',
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {isAtiva ? 'Selecionada' : 'Selecionar'}
+              </Button>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  if (embedded) return listaDeVozes;
 
   return (
     <div
@@ -251,141 +385,7 @@ const VoiceSelector = ({ history, dispatch }) => {
           </h1>
         </div>
 
-        <div
-          className="voice-options"
-          style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}
-        >
-          {opcoes.map((opcao, index) => {
-            const rowIdx = index + 1;
-            const isRowFocused = selectedRow === rowIdx;
-            const isAtiva = vozAtivaSistema === rowIdx;
-
-            // Lógica visual para saber qual botão está selecionado no teclado
-            const isOuvirFocused = isRowFocused && focusedAction === 0;
-            const isSelecionarFocused = isRowFocused && focusedAction === 1;
-
-            return (
-              <div
-                key={opcao.nome}
-                ref={element => {
-                  voiceRefs.current[index] = element;
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  backgroundColor: '#ffffff',
-                  borderRadius: '12px',
-                  padding: '15px 25px',
-                  transition: 'all 0.2s ease',
-                  boxShadow: isRowFocused
-                    ? '0 8px 20px rgba(0,85,255,0.15)'
-                    : '0 4px 8px rgba(0,0,0,0.05)',
-                  border: isAtiva
-                    ? '3px solid #4CAF50'
-                    : isRowFocused
-                    ? '3px solid #b3d4ff'
-                    : '3px solid transparent',
-                  transform: isRowFocused ? 'scale(1.02)' : 'scale(1)'
-                }}
-              >
-                <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '20px' }}
-                >
-                  <div
-                    style={{
-                      fontSize: '40px',
-                      backgroundColor: '#f0f4f8',
-                      borderRadius: '50%',
-                      width: '60px',
-                      height: '60px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {opcao.emoji}
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <div
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px'
-                      }}
-                    >
-                      <h2
-                        style={{
-                          margin: 0,
-                          fontSize: '20px',
-                          color: '#0a2540'
-                        }}
-                      >
-                        {opcao.nome}
-                      </h2>
-                      {isAtiva && (
-                        <CheckCircleIcon style={{ color: '#4CAF50' }} />
-                      )}
-                    </div>
-                    <p
-                      style={{
-                        margin: 0,
-                        color: '#666',
-                        fontSize: '14px',
-                        marginTop: '4px'
-                      }}
-                    >
-                      {opcao.descricao}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  style={{ display: 'flex', alignItems: 'center', gap: '15px' }}
-                >
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    startIcon={<VolumeUpIcon />}
-                    onClick={e => ouvirAmostra(rowIdx, e)}
-                    style={{
-                      borderRadius: '8px',
-                      textTransform: 'none',
-                      fontWeight: 'bold',
-                      border: isOuvirFocused
-                        ? '3px solid #0055ff'
-                        : '1px solid rgba(0, 0, 0, 0.23)',
-                      backgroundColor: isOuvirFocused
-                        ? '#e6f0ff'
-                        : 'transparent',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    Ouvir
-                  </Button>
-                  <Button
-                    variant="contained"
-                    onClick={e => selecionarESalvarVoz(rowIdx, e)}
-                    style={{
-                      backgroundColor: isAtiva ? '#4CAF50' : '#00bcd4',
-                      color: 'white',
-                      borderRadius: '8px',
-                      textTransform: 'none',
-                      fontWeight: 'bold',
-                      boxShadow: 'none',
-                      border: isSelecionarFocused
-                        ? '3px solid #0055ff'
-                        : '3px solid transparent',
-                      transition: 'all 0.2s ease'
-                    }}
-                  >
-                    {isAtiva ? 'Selecionada' : 'Selecionar'}
-                  </Button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        {listaDeVozes}
       </div>
     </div>
   );
