@@ -1,16 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { injectIntl } from 'react-intl';
-import { Button, Dialog, DialogContent } from '@material-ui/core';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle
+} from '@material-ui/core';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import SaveIcon from '@material-ui/icons/Save';
-import { resolveTileLabel } from '../../../helpers';
-import { deleteBoard, updateBoard } from '../../Board/Board.actions';
-import { deleteBoardCommunicator } from '../../Communicator/Communicator.actions';
+import RestoreIcon from '@material-ui/icons/SettingsBackupRestore';
+import WarningIcon from '@material-ui/icons/Warning';
+import { DEFAULT_BOARDS, deepCopy, resolveTileLabel } from '../../../helpers';
+import {
+  createBoard,
+  deleteBoard,
+  updateBoard
+} from '../../Board/Board.actions';
+import {
+  addBoardCommunicator,
+  deleteBoardCommunicator
+} from '../../Communicator/Communicator.actions';
 import FormularioItem, { PreviaCard } from './FormularioItem.component';
 import { CORES, obterRootBoardId } from './GerenciarCards.helpers';
 
@@ -21,6 +36,16 @@ const moverItem = (lista, de, para) => {
   const [item] = nova.splice(de, 1);
   nova.splice(para, 0, item);
   return nova;
+};
+
+// Versão original de uma pasta que já vem com o app (null nas criadas pelo cuidador)
+const obterBoardPadrao = boardId => {
+  const padroes = Object.values(DEFAULT_BOARDS).filter(Array.isArray);
+  for (const lista of padroes) {
+    const padrao = lista.find(b => b.id === boardId);
+    if (padrao) return padrao;
+  }
+  return null;
 };
 
 // Organiza a disposição dos cards e pastas da tela de Cards. As mudanças
@@ -42,6 +67,7 @@ const OrganizarCards = ({
   const [editado, setEditado] = useState(null);
   const [erro, setErro] = useState('');
   const [aviso, setAviso] = useState('');
+  const [confirmandoRestauro, setConfirmandoRestauro] = useState(false);
 
   const atual = caminho[caminho.length - 1];
   const board = boards.find(b => b.id === atual.boardId);
@@ -149,6 +175,37 @@ const OrganizarCards = ({
     setAviso('Disposição salva. A tela de Cards já mostra a nova organização.');
   };
 
+  const boardPadrao = obterBoardPadrao(atual.boardId);
+
+  const restaurarPadrao = () => {
+    const tilesPadrao = deepCopy(boardPadrao.tiles);
+
+    // Pastas padrão que tiveram o board apagado voltam também
+    tilesPadrao
+      .filter(
+        tile => tile.loadBoard && !boards.some(b => b.id === tile.loadBoard)
+      )
+      .forEach(tile => {
+        const pastaPadrao = obterBoardPadrao(tile.loadBoard);
+        if (pastaPadrao) {
+          dispatch(createBoard(deepCopy(pastaPadrao)));
+          dispatch(addBoardCommunicator(pastaPadrao.id));
+        }
+      });
+
+    // Os cards e pastas criados pelo cuidador continuam, no final
+    const criados = board.tiles.filter(tile => tile.personalizado);
+    dispatch(updateBoard({ ...board, tiles: [...tilesPadrao, ...criados] }));
+
+    descartar();
+    setConfirmandoRestauro(false);
+    setAviso(
+      `"${
+        atual.nome
+      }" voltou ao padrão. A tela de Cards já mostra a organização original.`
+    );
+  };
+
   if (!board) {
     return (
       <p className="gerenciar-cards-vazio">
@@ -180,6 +237,15 @@ const OrganizarCards = ({
         </nav>
 
         <div className="gerenciar-cards-acoes">
+          {boardPadrao && (
+            <Button
+              variant="outlined"
+              startIcon={<RestoreIcon />}
+              onClick={() => setConfirmandoRestauro(true)}
+            >
+              Restaurar padrão
+            </Button>
+          )}
           {pendente && (
             <Button variant="outlined" onClick={descartar}>
               Descartar
@@ -294,6 +360,51 @@ const OrganizarCards = ({
           ))}
         </div>
       )}
+
+      <Dialog
+        open={confirmandoRestauro}
+        onClose={() => setConfirmandoRestauro(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          <span className="organizar-restaurar-titulo">
+            <WarningIcon className="organizar-restaurar-icone" />
+            Restaurar "{atual.nome}" ao padrão?
+          </span>
+        </DialogTitle>
+        <DialogContent>
+          <p className="organizar-restaurar-texto">
+            Os cards que já vinham no app voltam para a posição, o nome, a foto
+            e a cor originais. Os que foram excluídos voltam a aparecer.
+          </p>
+          <p className="organizar-restaurar-texto">
+            Os cards e pastas que você criou não são apagados: eles ficam no
+            final.
+          </p>
+          {pendente && (
+            <p className="organizar-restaurar-texto forte">
+              As alterações não salvas nesta pasta serão perdidas.
+            </p>
+          )}
+          <p className="organizar-restaurar-texto forte">
+            Essa ação não pode ser desfeita.
+          </p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmandoRestauro(false)}>
+            Cancelar
+          </Button>
+          <Button
+            variant="contained"
+            className="organizar-botao-restaurar"
+            startIcon={<RestoreIcon />}
+            onClick={restaurarPadrao}
+          >
+            Restaurar padrão
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog
         open={!!editado}
