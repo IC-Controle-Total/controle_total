@@ -297,7 +297,7 @@ function Home({ dispatch, output }) {
           lastEnterTime.current = agora;
 
           if (focusedIndex === 0) {
-            history.push('/settings/voice');
+            history.push('/settings/configuracoes');
           } else if (focusedIndex === 1) {
             setMostrarTeclado(true);
             setLinhaSel(0);
@@ -383,7 +383,7 @@ function Home({ dispatch, output }) {
       <Button
         variant="contained"
         startIcon={<SettingsIcon />}
-        onClick={() => history.push('/settings/voice')}
+        onClick={() => history.push('/settings/configuracoes')}
         style={{
           position: 'fixed',
           top: '30px',
