@@ -96,10 +96,20 @@
     align-self: flex-start;
   }
 
+  /* Quatro abas não cabem numa linha no celular: duas por linha */
+  .configuracoes-abas {
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: none;
+  }
+
   .configuracoes-aba {
-    flex: 1;
+    flex: 1 1 40%;
     justify-content: center;
     padding: 12px;
+    margin-bottom: 0;
     font-size: 16px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.4);
   }
 }
