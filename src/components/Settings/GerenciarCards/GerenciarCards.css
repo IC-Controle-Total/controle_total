@@ -277,3 +277,91 @@
   color: #666;
   font-size: 14px;
 }
+
+.organizar-barra {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.organizar-caminho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 18px;
+  color: #0a2540;
+}
+
+.organizar-caminho-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 18px;
+  color: #0056b3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.organizar-caminho-separador {
+  margin-left: 6px;
+  color: #666;
+}
+
+.organizar-dica {
+  margin: 0;
+  color: #0a2540;
+}
+
+.organizar-pendente {
+  margin: 0;
+  padding: 12px 18px;
+  background: #fff8e1;
+  color: #8a6d00;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.organizar-grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.organizar-item {
+  position: relative;
+  cursor: grab;
+}
+
+.organizar-item.arrastando {
+  opacity: 0.4;
+}
+
+.organizar-posicao {
+  position: absolute;
+  top: 8px;
+  left: 10px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #666;
+}
+
+.organizar-setas {
+  display: flex;
+  gap: 8px;
+}
+
+.organizar-setas .MuiButton-root {
+  min-width: 44px;
+}
+
+.organizar-item .gerenciar-cards-item-acoes {
+  flex-wrap: wrap;
+  justify-content: center;
+}
