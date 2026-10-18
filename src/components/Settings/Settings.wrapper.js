@@ -7,6 +7,7 @@ import Subscribe from './Subscribe';
 import Language from './Language';
 import Speech from './Speech';
 import VoiceSelector from './VoiceSelector/VoiceSelector.component';
+import Configuracoes from './Configuracoes/Configuracoes.component';
 import Export from './Export';
 import Import from './Import';
 import Display from './Display';
@@ -25,6 +26,7 @@ const SettingsWrapper = ({ match }) => (
       <Route path={`${match.url}/language`} component={Language} />
       <Route path={`${match.url}/speech`} component={Speech} />
       <Route path={`${match.url}/voice`} component={VoiceSelector} />
+      <Route path={`${match.url}/configuracoes`} component={Configuracoes} />
       <Route path={`${match.url}/export`} component={Export} />
       <Route path={`${match.url}/import`} component={Import} />
       <Route path={`${match.url}/display`} component={Display} />
