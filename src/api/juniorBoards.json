@@ -1,0 +1,490 @@
+{
+  "homeTiles": [
+    {
+      "label": "Supermercados",
+      "image": "/symbols/mulberry/shop_2.svg",
+      "loadBoard": "jr-mercados",
+      "id": "jr-market",
+      "backgroundColor": "rgb(187, 222, 251)"
+    },
+    {
+      "label": "Roça da vó",
+      "image": "/symbols/mulberry/grandparents.svg",
+      "loadBoard": "jr-roca",
+      "id": "jr-farm",
+      "backgroundColor": "rgb(187, 222, 251)"
+    }
+  ],
+  "boards": [
+    {
+      "id": "jr-mercados",
+      "name": "Supermercados",
+      "author": "Cboard",
+      "email": "support@cboard.io",
+      "isPublic": false,
+      "hidden": true,
+      "tiles": [
+        {
+          "label": "Santa Rita do Sapucaí",
+          "image": "/symbols/arasaac/places.png",
+          "loadBoard": "jr-santarita",
+          "id": "jr-go-srs",
+          "backgroundColor": "rgb(187, 222, 251)"
+        },
+        {
+          "label": "Pouso Alegre",
+          "image": "/symbols/arasaac/places.png",
+          "loadBoard": "jr-pousoalegre",
+          "id": "jr-go-pa",
+          "backgroundColor": "rgb(187, 222, 251)"
+        },
+        {
+          "label": "Carrinho de compras",
+          "image": "/symbols/mulberry/cart.svg",
+          "id": "jr-cart",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Cesta",
+          "image": "/symbols/mulberry/basket.svg",
+          "id": "jr-basket",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Lista de compras",
+          "image": "/symbols/mulberry/index_cards.svg",
+          "id": "jr-shopping-list",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Sacola",
+          "image": "/symbols/mulberry/plastic_bag.svg",
+          "id": "jr-bag",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Dinheiro",
+          "image": "/symbols/mulberry/money.svg",
+          "id": "jr-money",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Cartão",
+          "image": "/symbols/mulberry/bank_card.svg",
+          "id": "jr-bank-card",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Pagar",
+          "image": "/symbols/mulberry/cash_point.svg",
+          "id": "jr-pay",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Comprar",
+          "image": "/symbols/mulberry/open_shop.svg",
+          "id": "jr-buy",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Comida",
+          "image": "/symbols/mulberry/food.svg",
+          "id": "jr-food",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Frutas",
+          "image": "/symbols/mulberry/fruit.svg",
+          "id": "jr-fruit",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Pão",
+          "image": "/symbols/mulberry/bread.svg",
+          "id": "jr-bread",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Leite",
+          "image": "/symbols/mulberry/milk.svg",
+          "id": "jr-milk",
+          "backgroundColor": "rgb(255, 241, 118)"
+        }
+      ]
+    },
+    {
+      "id": "jr-santarita",
+      "name": "Supermercados em Santa Rita do Sapucaí",
+      "author": "Cboard",
+      "email": "support@cboard.io",
+      "isPublic": false,
+      "hidden": true,
+      "tiles": [
+        {
+          "label": "Supermercado BH",
+          "image": "/symbols/mulberry/shop.svg",
+          "id": "jr-bh",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Supermercado Alvorada",
+          "image": "/symbols/mulberry/shop.svg",
+          "id": "jr-alvorada",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Supermercado Avenida",
+          "image": "/symbols/mulberry/shop.svg",
+          "id": "jr-avenida",
+          "backgroundColor": "rgb(255, 241, 118)"
+        }
+      ]
+    },
+    {
+      "id": "jr-pousoalegre",
+      "name": "Supermercados em Pouso Alegre",
+      "author": "Cboard",
+      "email": "support@cboard.io",
+      "isPublic": false,
+      "hidden": true,
+      "tiles": [
+        {
+          "label": "Supermercado Economart",
+          "image": "/symbols/mulberry/shop.svg",
+          "id": "jr-economart",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Supermercado Baronesa",
+          "image": "/symbols/mulberry/shop.svg",
+          "id": "jr-baronesa",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Supermercado Mart Minas",
+          "image": "/symbols/mulberry/shop.svg",
+          "id": "jr-martminas",
+          "backgroundColor": "rgb(255, 241, 118)"
+        }
+      ]
+    },
+    {
+      "id": "jr-roca",
+      "name": "Roça da vó",
+      "author": "Cboard",
+      "email": "support@cboard.io",
+      "isPublic": false,
+      "hidden": true,
+      "tiles": [
+        {
+          "label": "Vó",
+          "image": "/symbols/mulberry/grandmother.svg",
+          "id": "jr-grandma",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Casa dos tios",
+          "image": "/symbols/mulberry/house.svg",
+          "id": "jr-uncles",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Construção",
+          "image": "/symbols/mulberry/bricks.svg",
+          "id": "jr-building",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Plantação",
+          "image": "/symbols/mulberry/field.svg",
+          "loadBoard": "jr-plantacao",
+          "id": "jr-go-crops",
+          "backgroundColor": "rgb(187, 222, 251)"
+        },
+        {
+          "label": "Horta",
+          "image": "/symbols/mulberry/vegetables.svg",
+          "loadBoard": "jr-horta",
+          "id": "jr-go-garden",
+          "backgroundColor": "rgb(187, 222, 251)"
+        },
+        {
+          "label": "Flores e jardim",
+          "image": "/symbols/mulberry/flower.svg",
+          "loadBoard": "jr-flores",
+          "id": "jr-go-flowers",
+          "backgroundColor": "rgb(187, 222, 251)"
+        },
+        {
+          "label": "Animais",
+          "image": "/symbols/cboard/animals.svg",
+          "loadBoard": "jr-animais",
+          "id": "jr-go-animals",
+          "backgroundColor": "rgb(187, 222, 251)"
+        },
+        {
+          "label": "Trator",
+          "image": "/symbols/mulberry/tractor.svg",
+          "id": "jr-tractor",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Árvore",
+          "image": "/symbols/mulberry/tree.svg",
+          "id": "jr-tree",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Pomar",
+          "image": "/symbols/mulberry/fruit_tree.svg",
+          "id": "jr-orchard",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Passarinho",
+          "image": "/symbols/mulberry/bird.svg",
+          "id": "jr-bird",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Piquenique",
+          "image": "/symbols/mulberry/picnic.svg",
+          "id": "jr-picnic",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Visitar",
+          "image": "/symbols/mulberry/visit_,_to.svg",
+          "id": "jr-visit",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Descansar",
+          "image": "/symbols/mulberry/rest_,_to.svg",
+          "id": "jr-rest",
+          "backgroundColor": "rgb(255, 241, 118)"
+        }
+      ]
+    },
+    {
+      "id": "jr-plantacao",
+      "name": "Plantação",
+      "author": "Cboard",
+      "email": "support@cboard.io",
+      "isPublic": false,
+      "hidden": true,
+      "tiles": [
+        {
+          "label": "Mandioca",
+          "image": "/symbols/mulberry/roots.svg",
+          "id": "jr-cassava",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Café",
+          "image": "/symbols/mulberry/coffee.svg",
+          "id": "jr-coffee",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Milho",
+          "image": "/symbols/mulberry/sweetcorn.svg",
+          "id": "jr-corn",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Feijão",
+          "image": "/symbols/mulberry/broad_beans.svg",
+          "id": "jr-beans",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Banana",
+          "image": "/symbols/mulberry/banana.svg",
+          "id": "jr-banana",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Colher",
+          "image": "/symbols/mulberry/harvest.svg",
+          "id": "jr-harvest",
+          "backgroundColor": "rgb(255, 241, 118)"
+        }
+      ]
+    },
+    {
+      "id": "jr-horta",
+      "name": "Horta",
+      "author": "Cboard",
+      "email": "support@cboard.io",
+      "isPublic": false,
+      "hidden": true,
+      "tiles": [
+        {
+          "label": "Verduras",
+          "image": "/symbols/mulberry/vegetables.svg",
+          "id": "jr-vegetables",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Alface",
+          "image": "/symbols/mulberry/lettuce.svg",
+          "id": "jr-lettuce",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Tomate",
+          "image": "/symbols/mulberry/tomato.svg",
+          "id": "jr-tomato",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Cenoura",
+          "image": "/symbols/mulberry/carrot.svg",
+          "id": "jr-carrot",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Couve",
+          "image": "/symbols/mulberry/cabbage.svg",
+          "id": "jr-cabbage",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Cebola",
+          "image": "/symbols/mulberry/onion.svg",
+          "id": "jr-onion",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Brócolis",
+          "image": "/symbols/mulberry/broccoli.svg",
+          "id": "jr-broccoli",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Couve-flor",
+          "image": "/symbols/mulberry/cauliflower.svg",
+          "id": "jr-cauliflower",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Pepino",
+          "image": "/symbols/mulberry/cucumber.svg",
+          "id": "jr-cucumber",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Abóbora",
+          "image": "/symbols/mulberry/pumpkin.svg",
+          "id": "jr-pumpkin",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Colher verduras",
+          "image": "/symbols/mulberry/harvest.svg",
+          "id": "jr-pick-veg",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Regar",
+          "image": "/symbols/mulberry/watering_can.svg",
+          "id": "jr-water-garden",
+          "backgroundColor": "rgb(255, 241, 118)"
+        }
+      ]
+    },
+    {
+      "id": "jr-flores",
+      "name": "Flores e jardim",
+      "author": "Cboard",
+      "email": "support@cboard.io",
+      "isPublic": false,
+      "hidden": true,
+      "tiles": [
+        {
+          "label": "Flores",
+          "image": "/symbols/mulberry/flower.svg",
+          "id": "jr-flowers",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Rosa",
+          "image": "/symbols/mulberry/rose.svg",
+          "id": "jr-rose",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Margarida",
+          "image": "/symbols/mulberry/daisy.svg",
+          "id": "jr-daisy",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Tulipa",
+          "image": "/symbols/mulberry/tulip.svg",
+          "id": "jr-tulip",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Jardim",
+          "image": "/symbols/mulberry/back_garden.svg",
+          "id": "jr-garden",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Regar as flores",
+          "image": "/symbols/mulberry/watering_can.svg",
+          "id": "jr-water-flowers",
+          "backgroundColor": "rgb(255, 241, 118)"
+        }
+      ]
+    },
+    {
+      "id": "jr-animais",
+      "name": "Animais da roça",
+      "author": "Cboard",
+      "email": "support@cboard.io",
+      "isPublic": false,
+      "hidden": true,
+      "tiles": [
+        {
+          "label": "Vaca",
+          "image": "/symbols/mulberry/cow.svg",
+          "id": "jr-cow",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Galinha",
+          "image": "/symbols/mulberry/chicken.svg",
+          "id": "jr-chicken",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Cachorro",
+          "image": "/symbols/mulberry/dog.svg",
+          "id": "jr-dog",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Cavalo",
+          "image": "/symbols/mulberry/horse.svg",
+          "id": "jr-horse",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Porco",
+          "image": "/symbols/mulberry/piglet.svg",
+          "id": "jr-pig",
+          "backgroundColor": "rgb(255, 241, 118)"
+        },
+        {
+          "label": "Ovelha",
+          "image": "/symbols/mulberry/sheep.svg",
+          "id": "jr-sheep",
+          "backgroundColor": "rgb(255, 241, 118)"
+        }
+      ]
+    }
+  ]
+}
