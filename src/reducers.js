@@ -17,6 +17,7 @@ import communicatorReducer from './components/Communicator/Communicator.reducer'
 import notificationsReducer from './components/Notifications/Notifications.reducer';
 import subscriptionProviderReducer from './providers/SubscriptionProvider/SubscriptionProvider.reducer';
 import { DEFAULT_BOARDS } from '../src/helpers';
+import juniorBoards from './api/juniorBoards.json';
 
 localForage.config({
   name: 'cboard',
@@ -120,6 +121,57 @@ const boardMigrations = {
         boards: [...state.board.boards, ...DEFAULT_BOARDS.picSeePal]
       }
     };
+  },
+  1: state => {
+    if (!state?.board?.boards) return state;
+
+    const rootBoard = DEFAULT_BOARDS.advanced.find(
+      board => board.id === 'root'
+    );
+    const boardsToMerge = [
+      {
+        ...rootBoard,
+        tiles: juniorBoards.homeTiles
+      },
+      ...juniorBoards.boards
+    ];
+
+    const boards = [...state.board.boards];
+    boardsToMerge.forEach(seedBoard => {
+      const index = boards.findIndex(board => board.id === seedBoard.id);
+      if (index === -1) {
+        boards.push(seedBoard);
+        return;
+      }
+
+      const existingBoard = boards[index];
+      const existingTiles = existingBoard.tiles || [];
+      const missingTiles = seedBoard.tiles.filter(
+        tile => !existingTiles.some(existingTile => existingTile.id === tile.id)
+      );
+      const nextTiles =
+        seedBoard.id === 'root'
+          ? [
+              ...existingTiles.slice(0, 2),
+              ...missingTiles,
+              ...existingTiles.slice(2)
+            ]
+          : [...existingTiles, ...missingTiles];
+
+      boards[index] = {
+        ...seedBoard,
+        ...existingBoard,
+        tiles: nextTiles
+      };
+    });
+
+    return {
+      ...state,
+      board: {
+        ...state.board,
+        boards
+      }
+    };
   }
 };
 
@@ -127,7 +179,7 @@ const config = {
   key: 'root',
   storage: migratingStorage,
   blacklist: ['language'],
-  version: 0,
+  version: 1,
   migrate: createMigrate(boardMigrations, { debug: false })
 };
 

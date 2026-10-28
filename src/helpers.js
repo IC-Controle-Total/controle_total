@@ -1,8 +1,22 @@
 import boards from './api/boards.json';
 import picSeePal from './api/corePicSeePal.json';
+import juniorBoards from './api/juniorBoards.json';
+
+const advancedBoards = boards.advanced.map(board =>
+  board.id === 'root'
+    ? {
+        ...board,
+        tiles: [
+          ...board.tiles.slice(0, 2),
+          ...juniorBoards.homeTiles,
+          ...board.tiles.slice(2)
+        ]
+      }
+    : board
+);
 
 export const DEFAULT_BOARDS = {
-  advanced: boards.advanced,
+  advanced: [...advancedBoards, ...juniorBoards.boards],
   picSeePal: picSeePal
 };
 
