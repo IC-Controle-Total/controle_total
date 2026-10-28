@@ -869,6 +869,12 @@ export class BoardContainer extends Component {
         showNotification(intl.formatMessage(messages.boardMissed));
       }
     } else {
+      const { output } = this.props;
+      const lastTile = output[output.length - 1];
+      if (lastTile && lastTile.id === tile.id) {
+        return;
+      }
+
       clickSymbol(tile.label);
       if (!navigationSettings.quietBuilderMode) {
         /* say(); */
