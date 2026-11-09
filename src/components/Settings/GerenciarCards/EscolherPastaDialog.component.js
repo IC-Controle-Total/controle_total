@@ -22,7 +22,8 @@ const EscolherPastaDialog = ({
   pastaAtual,
   onEscolher,
   onCriarPasta,
-  onFechar
+  onFechar,
+  mostrarOpcaoNovaPasta = true
 }) => {
   const [escolha, setEscolha] = useState(null);
   const [nomeNovaPasta, setNomeNovaPasta] = useState('');
@@ -74,7 +75,7 @@ const EscolherPastaDialog = ({
             <div className="escolher-pasta-icone">
               <HomeIcon fontSize="large" />
             </div>
-            <span>Tela inicial (sem pasta)</span>
+            <span>Tela inicial</span>
           </button>
 
           {pastas.map(pasta => (
@@ -88,23 +89,25 @@ const EscolherPastaDialog = ({
               <div className="escolher-pasta-icone">
                 {pasta.tile.image && <img src={pasta.tile.image} alt="" />}
               </div>
-              <span>{pasta.nome}</span>
+              <span>{pasta.caminho.join(' / ')}</span>
             </button>
           ))}
 
-          <button
-            type="button"
-            className={classeOpcao(NOVA_PASTA) + ' nova'}
-            onClick={() => setEscolha(NOVA_PASTA)}
-          >
-            <div className="escolher-pasta-icone">
-              <CreateNewFolderIcon fontSize="large" />
-            </div>
-            <span>Criar pasta nova</span>
-          </button>
+          {mostrarOpcaoNovaPasta && (
+            <button
+              type="button"
+              className={classeOpcao(NOVA_PASTA) + ' nova'}
+              onClick={() => setEscolha(NOVA_PASTA)}
+            >
+              <div className="escolher-pasta-icone">
+                <CreateNewFolderIcon fontSize="large" />
+              </div>
+              <span>Criar pasta nova</span>
+            </button>
+          )}
         </div>
 
-        {escolha === NOVA_PASTA && (
+        {mostrarOpcaoNovaPasta && escolha === NOVA_PASTA && (
           <div className="escolher-pasta-nova">
             <TextField
               id="escolher-pasta-nome"
