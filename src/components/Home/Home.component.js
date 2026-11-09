@@ -13,13 +13,20 @@ import {
   cancelSpeech
 } from '../../providers/SpeechProvider/SpeechProvider.actions';
 import './Home.css';
+import '../../Keyboard/Keyboard.css';
+import { getSuggestions, completeWord } from '../../Keyboard/suggestions';
 
 const layoutTeclado = [
-  ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
+  ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '='],
   ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
   ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Ç'],
-  ['CAPS', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'ESPAÇO', 'APAGAR']
+  ['Z', 'X', 'C', 'V', 'B', 'N', 'M', ',', '.', ';', ':', '?'],
+  ['Á', 'À', 'Â', 'Ã', 'É', 'Ê', 'Í', 'Ó', 'Ô', 'Õ', 'Ú', 'Ü'],
+  ['!', '@', '#', '$', '%', '&', '*', '(', ')', '/', "'", '"', '+', '_'],
+  ['CAPS', 'ESPAÇO', 'APAGAR']
 ];
+
+const isLetra = tecla => /^[A-ZÀ-ÖØ-Ý]$/.test(tecla);
 
 function Home({ dispatch, output }) {
   const history = useHistory();
@@ -130,6 +137,40 @@ function Home({ dispatch, output }) {
   const [colSel, setColSel] = useState(0);
   const [topoColSel, setTopoColSel] = useState(0);
   const lastEnterTime = useRef(0);
+  const [sugestaoSel, setSugestaoSel] = useState(0);
+  const sugestoes = getSuggestions(
+    textoDigitado,
+    [...historico, getFraseFromRedux()],
+    isCapslock
+  );
+
+  const escolherSugestao = palavra => {
+    setTextoDigitado(prev => completeWord(prev, palavra));
+    setLinhaSel(0);
+    setColSel(0);
+    setSugestaoSel(0);
+  };
+
+  useEffect(
+    () => {
+      setSugestaoSel(0);
+      if (linhaSel === -2 && sugestoes.length === 0) setLinhaSel(0);
+    },
+    [textoDigitado, isCapslock]
+  );
+
+  useEffect(
+    () => {
+      if (linhaSel !== -2) return;
+      const selected = document.getElementById(
+        `keyboard-suggestion-${sugestaoSel}`
+      );
+      if (selected && selected.scrollIntoView) {
+        selected.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      }
+    },
+    [linhaSel, sugestaoSel]
+  );
 
   useEffect(
     () => {
@@ -157,7 +198,7 @@ function Home({ dispatch, output }) {
       setTextoDigitado(prev => prev.slice(0, -1));
     } else {
       const caractere =
-        !isCapslock && /^[A-ZÇ]$/.test(tecla) ? tecla.toLowerCase() : tecla;
+        !isCapslock && isLetra(tecla) ? tecla.toLowerCase() : tecla;
       setTextoDigitado(prev => prev + caractere);
     }
   };
@@ -195,6 +236,24 @@ function Home({ dispatch, output }) {
           const historyRowsStart = layoutTeclado.length;
           const maxLinha = historyRowsStart + historico.length - 1;
 
+          if (linhaSel === -2) {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+              const step = event.key === 'ArrowRight' ? 1 : -1;
+              setSugestaoSel(
+                prev => (prev + step + sugestoes.length) % sugestoes.length
+              );
+            } else if (event.key === 'ArrowUp') {
+              setLinhaSel(-1);
+              setTopoColSel(1);
+            } else if (event.key === 'ArrowDown') {
+              setLinhaSel(0);
+              setColSel(0);
+            } else if (event.key === 'Enter' && sugestoes[sugestaoSel]) {
+              escolherSugestao(sugestoes[sugestaoSel]);
+            }
+            return;
+          }
+
           if (event.key === 'ArrowUp') {
             if (linhaSel === -1) {
               if (topoColSel === 1) {
@@ -209,7 +268,8 @@ function Home({ dispatch, output }) {
                 }
               }
             } else if (linhaSel === 0) {
-              setLinhaSel(-1);
+              setLinhaSel(sugestoes.length > 0 ? -2 : -1);
+              setSugestaoSel(0);
               setTopoColSel(1);
             } else if (linhaSel === historyRowsStart) {
               setLinhaSel(historyRowsStart - 1);
@@ -228,7 +288,8 @@ function Home({ dispatch, output }) {
               if (topoColSel === 0) {
                 setTopoColSel(1);
               } else {
-                setLinhaSel(0);
+                setLinhaSel(sugestoes.length > 0 ? -2 : 0);
+                setSugestaoSel(0);
                 setColSel(0);
               }
             } else if (linhaSel === historyRowsStart - 1) {
@@ -328,7 +389,8 @@ function Home({ dispatch, output }) {
       veioDosCards,
       fraseOriginal,
       caminhoDeVolta,
-      historico
+      historico,
+      sugestaoSel
     ]
   );
 
@@ -432,19 +494,24 @@ function Home({ dispatch, output }) {
 
       {mostrarTeclado && (
         <div
+          className="keyboard-screen"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="keyboard-title"
           style={{
             position: 'fixed',
             top: 0,
             left: 0,
-            width: '100vw',
-            height: '100vh',
+            width: '100%',
+            height: '100%',
+            boxSizing: 'border-box',
             overflowY: 'auto',
             background: 'linear-gradient(180deg, #a2e9f3 0%, #76d7e5 100%)',
             zIndex: 999999,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: '20px'
+            padding: 'clamp(8px, 1.5vw, 20px)'
           }}
         >
           <button
@@ -475,13 +542,15 @@ function Home({ dispatch, output }) {
           </button>
 
           <h2
+            id="keyboard-title"
             style={{
-              marginBottom: '20px',
-              marginTop: '40px',
+              marginBottom: '12px',
+              marginTop: '60px',
               color: '#0a2540',
               fontSize: '32px',
               fontWeight: '900',
-              textShadow: '1px 1px 3px rgba(0,0,0,0.15)'
+              textShadow: '1px 1px 3px rgba(0,0,0,0.15)',
+              visibility: sugestoes.length > 0 ? 'hidden' : 'visible'
             }}
           >
             Teclado Interativo
@@ -491,15 +560,18 @@ function Home({ dispatch, output }) {
             style={{
               display: 'flex',
               gap: '12px',
-              width: '90%',
-              maxWidth: '800px',
-              marginBottom: '25px',
+              width: '100%',
+              marginBottom: '12px',
+              flexShrink: 0,
               alignItems: 'center'
             }}
           >
             <div
+              className="keyboard-phrase"
               style={{
                 flex: 1,
+                minWidth: 0,
+                whiteSpace: 'pre-wrap',
                 backgroundColor: '#ffffff',
                 color: '#000000',
                 fontSize: '28px',
@@ -518,6 +590,7 @@ function Home({ dispatch, output }) {
               )}
             </div>
             <button
+              className="keyboard-speak"
               onClick={() => falarFrase(textoDigitado)}
               style={{
                 padding: '15px 25px',
@@ -542,34 +615,50 @@ function Home({ dispatch, output }) {
             </button>
           </div>
 
-          <div
-            style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}
-          >
+          {sugestoes.length > 0 && (
+            <div
+              className="keyboard-suggestions"
+              role="group"
+              aria-label="Sugestões de palavras"
+            >
+              {sugestoes.map((palavra, index) => (
+                <button
+                  key={palavra}
+                  id={`keyboard-suggestion-${index}`}
+                  className="keyboard-suggestion"
+                  data-selected={linhaSel === -2 && sugestaoSel === index}
+                  onClick={() => escolherSugestao(palavra)}
+                >
+                  {palavra}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="keyboard-keys">
             {layoutTeclado.map((linha, lIndex) => (
-              <div
-                key={lIndex}
-                style={{
-                  display: 'flex',
-                  gap: '8px',
-                  justifyContent: 'center'
-                }}
-              >
+              <div key={lIndex} className="keyboard-row">
                 {linha.map((tecla, cIndex) => {
                   const estaSelecionada =
                     linhaSel === lIndex && colSel === cIndex;
                   let labelTecla = tecla;
                   if (tecla === 'CAPS')
                     labelTecla = isCapslock ? '⬆ MAIÚS' : '⬇ minús';
-                  else if (!isCapslock && /^[A-ZÇ]$/.test(tecla))
+                  else if (!isCapslock && isLetra(tecla))
                     labelTecla = tecla.toLowerCase();
 
                   return (
                     <button
                       key={cIndex}
+                      className={`keyboard-key${
+                        tecla === 'ESPAÇO' ? ' keyboard-space' : ''
+                      }`}
+                      aria-label={labelTecla}
+                      aria-pressed={tecla === 'CAPS' ? isCapslock : undefined}
                       onClick={() => handleTeclaClick(lIndex, cIndex, tecla)}
                       style={{
-                        padding: '12px 18px',
-                        fontSize: '18px',
+                        padding: '8px 2px',
+                        fontSize: 'clamp(14px, 2vw, 30px)',
                         borderRadius: '6px',
                         border: estaSelecionada
                           ? '4px solid #ffcc00'
@@ -594,13 +683,14 @@ function Home({ dispatch, output }) {
 
           <div
             style={{
-              width: '90%',
-              maxWidth: '800px',
+              width: '100%',
+              boxSizing: 'border-box',
+              flexShrink: 0,
               backgroundColor: 'rgba(255, 255, 255, 0.65)',
               borderRadius: '16px',
-              padding: '20px',
-              marginTop: '25px',
-              marginBottom: '20px',
+              padding: '12px',
+              marginTop: '12px',
+              marginBottom: '0',
               boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
               display: 'flex',
               flexDirection: 'column'
@@ -627,7 +717,7 @@ function Home({ dispatch, output }) {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '10px',
-                maxHeight: '180px',
+                maxHeight: '18vh',
                 overflowY: 'auto',
                 paddingRight: '10px'
               }}

@@ -239,7 +239,7 @@ const mapStateToProps = (state, { intl }) => {
   });
   // Nome da pasta como aparece na tela de Cards
   pastas.forEach(pasta => {
-    nomesBoards[pasta.boardId] = pasta.nome;
+    nomesBoards[pasta.boardId] = pasta.caminho.join(' / ');
   });
 
   return {

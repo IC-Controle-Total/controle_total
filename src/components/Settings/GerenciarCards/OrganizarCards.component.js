@@ -27,7 +27,11 @@ import {
   deleteBoardCommunicator
 } from '../../Communicator/Communicator.actions';
 import FormularioItem, { PreviaCard } from './FormularioItem.component';
-import { CORES, obterRootBoardId } from './GerenciarCards.helpers';
+import {
+  CORES,
+  obterConteudoDaPasta,
+  obterRootBoardId
+} from './GerenciarCards.helpers';
 
 import './GerenciarCards.css';
 
@@ -109,10 +113,13 @@ const OrganizarCards = ({
   };
 
   const excluir = tile => {
+    const conteudo = tile.loadBoard
+      ? obterConteudoDaPasta(boards, tile.loadBoard)
+      : null;
     const mensagem = tile.loadBoard
-      ? `Excluir a pasta "${nomeDoTile(
-          tile
-        )}" da tela de Cards? Os cards dentro dela deixam de aparecer.`
+      ? `Excluir a pasta "${nomeDoTile(tile)}" da tela de Cards? ` +
+        `Os ${conteudo.cards} card(s) e ${conteudo.subpastas} subpasta(s) ` +
+        'dentro dela também serão excluídos.'
       : `Excluir o card "${nomeDoTile(tile)}"?`;
     if (!window.confirm(mensagem)) return;
 
@@ -157,8 +164,11 @@ const OrganizarCards = ({
     excluidos
       .filter(tile => tile.loadBoard && tile.personalizado)
       .forEach(tile => {
-        dispatch(deleteBoard([tile.loadBoard]));
-        dispatch(deleteBoardCommunicator(tile.loadBoard));
+        const conteudo = obterConteudoDaPasta(boards, tile.loadBoard);
+        dispatch(deleteBoard(conteudo.boardIds));
+        conteudo.boardIds.forEach(boardId =>
+          dispatch(deleteBoardCommunicator(boardId))
+        );
       });
 
     // Mantém o nome do board das pastas renomeadas igual ao do card da pasta
