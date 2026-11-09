@@ -3,6 +3,7 @@ import { readAndCompressImage } from 'browser-image-resizer';
 import { Button, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
+import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import { CORES } from './GerenciarCards.helpers';
 
@@ -48,6 +49,8 @@ const FormularioItem = forwardRef(
       onCancelar,
       editando,
       ehPasta,
+      pastaMaeNome,
+      onSelecionarPastaMae,
       erro,
       setErro
     },
@@ -113,6 +116,24 @@ const FormularioItem = forwardRef(
               inputProps={{ maxLength: 40 }}
               onChange={e => onChange({ ...valores, nome: e.target.value })}
             />
+
+            {ehPasta && !editando && onSelecionarPastaMae && (
+              <div className="gerenciar-cards-destino">
+                <p className="gerenciar-cards-rotulo">Criar dentro de</p>
+                <Button
+                  type="button"
+                  variant="outlined"
+                  color="primary"
+                  fullWidth
+                  className="gerenciar-cards-botao-destino"
+                  onClick={onSelecionarPastaMae}
+                >
+                  <FolderOpenIcon />
+                  <span>{pastaMaeNome}</span>
+                  <EditIcon />
+                </Button>
+              </div>
+            )}
 
             <div>
               <input
